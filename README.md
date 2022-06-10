@@ -170,8 +170,8 @@ tl.play();
 &nbsp;
 ## Methods
 
-&nbsp;
-### Player
+Player
+---
 
 #### .play()
 Start the animation.
@@ -206,7 +206,8 @@ setTimeout(() => {
 ```
 
 &nbsp;
-### Getters
+Getters
+---
 
 #### .getDuration()
 Return the total duration with duration, delays, iterations ...
@@ -229,7 +230,8 @@ myAnimation.getPlayState();
 ```
 
 &nbsp;
-### Setters
+Setters
+---
 
 #### .setDirection(string)
 Set a new direction ('normal', 'reverse', 'alternate').
@@ -248,7 +250,8 @@ myAnimation.setDirection('alternate');
 ```
 
 &nbsp;
-### Events
+Events
+---
 
 #### .onready()
 Execute when animation is ready.
@@ -286,7 +289,7 @@ Stagger can be used on every options property you want.
 }
 ```
 
-#### Easing stagger
+### Easing stagger
 Easing can accept an array to set different easing on each elements of your targets.
 ```JS
 // Options
@@ -315,11 +318,11 @@ const tl = timeline(
 tl.play();
 ```
 &nbsp;
-#### Animation start
+### Animation start
 You can change the start point of each animations within the timeline by adding 'start'.
 
 &nbsp;
-#### Relative position
+### Relative position
 Use ***STRING*** to change the relative position of your animation.
 
 ```JS
@@ -331,7 +334,7 @@ Use ***STRING*** to change the relative position of your animation.
 {animate: myAnimation6, start: '<-1200'}
 ```
 &nbsp;
-#### Absolute position
+### Absolute position
 Use ***NUMBER*** to change the absolute position of your animation.
 
 ```JS

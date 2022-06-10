@@ -3,6 +3,7 @@
   "version": "0.0.4",
   "description": "Animation library build on top of web animation API (WAAPI)",
   "main": "./lib/index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

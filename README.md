@@ -4,9 +4,8 @@
 
 <div align="center">
 
-&nbsp;
 
-Learn more about WAAPI:
+*Learn more about WAAPI:*
 
 [Web animation API Documentation](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API)
 

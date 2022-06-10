@@ -197,7 +197,9 @@ Stop and remove animation from browser.
 #### .seek(number)
 Go to a specific moment of animation (number from 0 to 1).
 
-Example:
+&nbsp;
+
+<u>Example:</u>
 ```JS
 myAnimation.play();
 
@@ -225,7 +227,9 @@ Return the current playbackRate.
 #### .getProgress() // Soon
 Return the current progression (from 0 to 1).
 
-Example:
+&nbsp;
+
+<u>Example:</u>
 ```JS
 myAnimation.getPlayState();
 // 'running'
@@ -248,7 +252,9 @@ Set the option willChange to true or false.
 #### .setCommitStyles()
 Set the option commitStyles to true or false.
 
-Example:
+&nbsp;
+
+<u>Example:</u>
 ```JS
 myAnimation.setDirection('alternate');
 ```
@@ -275,7 +281,9 @@ Execute when animation is removed (everytime the animation is paused/play or cha
 #### .oncancel()
 Execute when animation is canceled.
 
-Example:
+&nbsp;
+
+<u>Example:</u>
 ```JS
 myAnimation.onready(() => {
   console.log('Ready to play !');

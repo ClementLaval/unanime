@@ -33,7 +33,7 @@ import { animate } from 'unanime';
 ### Common js
 
 ```JS
-require animate = require('unanime');
+const animate = require('unanime');
 ````
 
 &nbsp;

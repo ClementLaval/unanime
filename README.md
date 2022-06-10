@@ -253,6 +253,15 @@ Stagger can be used on every options property you want.
 }
 ```
 
+### Easing stagger
+Easing can accept an array to set different easing on each elements of your targets.
+```JS
+// Options
+{
+  easing: ['easingInCirc', null, 'easein', 'cubic-bezier(.17,.67,.83,.67)']
+}
+```
+
 ## Timeline
 
 ```JS

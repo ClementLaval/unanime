@@ -258,7 +258,7 @@ Easing can accept an array to set different easing on each elements of your targ
 ```JS
 // Options
 {
-  easing: ['easingInCirc', null, 'easein', 'cubic-bezier(.17,.67,.83,.67)']
+  easing: ['easingInCirc', null, 'ease-out', 'cubic-bezier(.17,.67,.83,.67)']
 }
 ```
 

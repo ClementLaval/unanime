@@ -2,7 +2,14 @@
 
 ***<div align="center">Javascript animation library build on top of web animation API (WAAPI).</div>***
 
+<div align="center">Learn more about WAAPI:
+</div>
+[Web animation API Doc ](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API)
 
+
+&nbsp;
+
+&nbsp;
 # Getting started
 
 ## Download

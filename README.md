@@ -43,7 +43,7 @@ const myAnimation = animate(
     autoplay: true
   }
 )
-````
+```
 
 ## Structure
 ```JS
@@ -124,6 +124,20 @@ const myAnimation = animate(
   }
 )
 
+myAnimation.play();
+```
+
+## Running
+Animation is not running by default, you have two options: 
+```JS
+// Options
+{ autoplay: true }
+```
+
+or
+
+```JS
+// Method
 myAnimation.play();
 ```
 
@@ -251,8 +265,10 @@ const tl = timeline(
     { animate: myAnimation2, start: '<+800'},
   ],
   // Timeline options
-  {autoplay: true, iterations: Infinity, direction: 'alternate'}
+  {autoplay: false, iterations: Infinity, direction: 'alternate'}
 )
+
+timeline.play();
 ```
 
 ### Animation start

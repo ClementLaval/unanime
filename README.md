@@ -1,6 +1,6 @@
-# <center>unanime.js</center>
+# <div align="center">unanime.js</div>
 
-***<center>Javascript animation library build on top of web animation API (WAAPI).</center>***
+***<div align="center">Javascript animation library build on top of web animation API (WAAPI).</div>***
 
 
 # Getting started
@@ -199,7 +199,7 @@ Go to a specific moment of animation (number from 0 to 1).
 
 &nbsp;
 
-<u>Example:</u>
+*Example:*
 ```JS
 myAnimation.play();
 
@@ -229,7 +229,7 @@ Return the current progression (from 0 to 1).
 
 &nbsp;
 
-<u>Example:</u>
+*Example:*
 ```JS
 myAnimation.getPlayState();
 // 'running'
@@ -254,7 +254,7 @@ Set the option commitStyles to true or false.
 
 &nbsp;
 
-<u>Example:</u>
+*Example:*
 ```JS
 myAnimation.setDirection('alternate');
 ```
@@ -283,7 +283,7 @@ Execute when animation is canceled.
 
 &nbsp;
 
-<u>Example:</u>
+*Example:*
 ```JS
 myAnimation.onready(() => {
   console.log('Ready to play !');

@@ -59,7 +59,7 @@ cont var = animate(
 ```
 
 ## Targets
-String / Object or Array accepted.
+String, Object or Array accepted.
 
 ```JS
 // Targets
@@ -67,7 +67,7 @@ String / Object or Array accepted.
 ```
 
 ## Keyframes
-Array with one multiple objects.
+Array with one or multiple objects.
 When one object is specified, it's like 'TO' direction.
 Use all CSS(Js) property you want.
 

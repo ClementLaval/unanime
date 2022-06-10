@@ -25,6 +25,7 @@ import { animate } from 'unanime';
 require animate = require('unanime');
 ````
 
+&nbsp;
 # Quick start
 
 ## Example
@@ -44,7 +45,7 @@ const myAnimation = animate(
   }
 )
 ```
-
+&nbsp;
 ## Structure
 ```JS
 cont var = animate(
@@ -57,7 +58,7 @@ cont var = animate(
   }
 )
 ```
-
+&nbsp;
 ## Targets
 String, Object or Array accepted.
 
@@ -65,7 +66,7 @@ String, Object or Array accepted.
 // Targets
 '.myTargets' // Under the hood, document.querySelectorAll is used
 ```
-
+&nbsp;
 ## Keyframes
 Array with one or multiple objects.
 When one object is specified, it's like 'TO' direction.
@@ -78,7 +79,7 @@ Use all CSS(Js) property you want.
   {transform: 'translate3d(0, 100px, 0)', backgroundColor: 'green'},
 ]
 ```
-
+&nbsp;
 ## Options
 Set your options, they all have a default value specified.
 You can use an anonymous function on every property.
@@ -140,7 +141,7 @@ const myAnimation = animate(
 
 myAnimation.play();
 ```
-
+&nbsp;
 ## Running
 Animation is not running by default, you have three options: 
 ```JS
@@ -166,13 +167,11 @@ const tl = timeline(
 )
 tl.play();
 ```
-
+&nbsp;
 ## Methods
-
 
 &nbsp;
 ### Player
----
 
 #### .play()
 Start the animation.
@@ -208,7 +207,6 @@ setTimeout(() => {
 
 &nbsp;
 ### Getters
----
 
 #### .getDuration()
 Return the total duration with duration, delays, iterations ...
@@ -232,7 +230,7 @@ myAnimation.getPlayState();
 
 &nbsp;
 ### Setters
----
+
 #### .setDirection(string)
 Set a new direction ('normal', 'reverse', 'alternate').
 
@@ -251,7 +249,6 @@ myAnimation.setDirection('alternate');
 
 &nbsp;
 ### Events
----
 
 #### .onready()
 Execute when animation is ready.
@@ -276,7 +273,7 @@ myAnimation.onready(() => {
   console.log('Ready to play !');
 });
 ```
-
+&nbsp;
 ## Stagger
 
 Stagger can be used on every options property you want.
@@ -289,7 +286,7 @@ Stagger can be used on every options property you want.
 }
 ```
 
-### Easing stagger
+#### Easing stagger
 Easing can accept an array to set different easing on each elements of your targets.
 ```JS
 // Options
@@ -299,6 +296,7 @@ Easing can accept an array to set different easing on each elements of your targ
 }
 ```
 
+&nbsp;
 ## Timeline
 
 ```JS
@@ -316,11 +314,12 @@ const tl = timeline(
 
 tl.play();
 ```
-
-### Animation start
+&nbsp;
+#### Animation start
 You can change the start point of each animations within the timeline by adding 'start'.
 
-### Relative position
+&nbsp;
+#### Relative position
 Use ***STRING*** to change the relative position of your animation.
 
 ```JS
@@ -331,8 +330,8 @@ Use ***STRING*** to change the relative position of your animation.
 {animate: myAnimation5, start: '<<+800'},
 {animate: myAnimation6, start: '<-1200'}
 ```
-
-### Absolute position
+&nbsp;
+#### Absolute position
 Use ***NUMBER*** to change the absolute position of your animation.
 
 ```JS

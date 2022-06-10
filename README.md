@@ -86,7 +86,7 @@ You can use an anonymous function on every property.
 ```JS
 // Options
 {
-  duration: () => Math.floor(Math.random() * 10000);
+  duration: () => Math.floor(Math.random() * 10000); // 5683
 }
 ```
 

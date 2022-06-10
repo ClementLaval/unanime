@@ -153,91 +153,94 @@ setTimeout(() => {
 }, 2500);
 ```
 
-### .play()
+#### .play()
 Start the animation.
 
-### .reverse()
+#### .reverse()
 Reverse the current playbackRate and play animation.
 
-### .pause()
+#### .pause()
 Pause the animation.
 
-### .reset()
+#### .reset()
 Go back to first frame and pause animation.
 
-### .restart()
+#### .restart()
 Go back to first frame and play animation.
 
-### .finish()
+#### .finish()
 Go back to the last frame animation.
 
-### .cancel()
+#### .cancel()
 Stop and remove animation from browser.
 
-### .seek(number)
+#### .seek(number)
 Go to a specific moment of animation (number from 0 to 1).
 
 ### Getters
+
 ```JS
 myAnimation.getPlayState();
 // 'running'
 ```
 
-### .getDuration()
+#### .getDuration()
 Return the total duration with duration, delays, iterations ...
 
-### .getCurrentIteration()
+#### .getCurrentIteration()
 Return the current iteration when executed.
 
-### .getPlayState()
+#### .getPlayState()
 Return the animation's status: 'idle', 'running', 'finished'.
 
-### .getPlaybackRate()
+#### .getPlaybackRate()
 Return the current playbackRate.
 
-### .getProgress() // Soon
+#### .getProgress() // Soon
 Return the current progression (from 0 to 1).
 
 ### Setters
+
 ```JS
 myAnimation.setDirection('alternate');
 ```
 
-### .setDirection(string)
+#### .setDirection(string)
 Set a new direction ('normal', 'reverse', 'alternate').
 
-### .setPlaybackRate(number)
+#### .setPlaybackRate(number)
 Set a new playbackRate ( + / - number). Change the speed of animation.
 
-### .setWillChange(boolean)
+#### .setWillChange(boolean)
 Set the option willChange to true or false.
 
-### .setCommitStyles()
+#### .setCommitStyles()
 Set the option commitStyles to true or false.
 
 ### Events
+
 ```JS
 myAnimation.onready(() => {
   console.log('Ready to play !');
 });
 ```
 
-### .onready()
+#### .onready()
 Execute when animation is ready.
 
-### .onplay()
+#### .onplay()
 Execute when animation is playing.
 
-### .onpause()
+#### .onpause()
 Execute when animation is paused.
 
-### .onfinish()
+#### .onfinish()
 Execute when animation is finished.
 
-### .onremove()
+#### .onremove()
 Execute when animation is removed (everytime the animation is paused/play or changed);
 
-### .oncancel()
+#### .oncancel()
 Execute when animation is canceled.
 
 

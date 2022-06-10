@@ -107,20 +107,34 @@ const myAnimation = animate(
 
   // Options (object)
   {
-    duration: 1000, // animation's duration in ms (number, object) | default: 1000
-    direction: 'normal', // 'normal', 'reverse', 'alternate' (string) / default: 'normal'
-    easing: 'easeOutBack', // easings.net accepted or cubic-bezier (string) | default: 'linear'
-    delay: 200, // delay before animation start (number, object) | default: 0
-    endDelay: 0, // delay after animation finished (number, object) | default: 0
-    iterations: 3, // times the animation is executed (positive number or Infinity) | default: 1
-    iterationStart: 1.2, // select at which iteration animation start (number) | default: 0
-    fill: 'both', // apply the style to your targets 'none', 'auto', 'backwards', 'forwards', 'both' (string) | default: 'both',
-    composite: 'replace', // choose how each keyframe impact the style, 'replace', 'add', 'accumulate' | default: 'replace'
-    playbackRate: 1, // choose the speed of your animation without changing duration (+ / - number) | default: 1
-    autoplay: false, // start animation when ready (boolean) | default: false
-    commitStyles: false, // option that apply css style to targets after animation finished | default: false
-    autocancel: false, // remove animation from browser at the end | default: false
-    willChange: false, // add and remove automatically a 'will-change: transform' to your target during animation | default: false
+    duration: 1000, 
+    // animation's duration in ms (number, object) | default: 1000
+    direction: 'normal', 
+    // 'normal', 'reverse', 'alternate' (string) / default: 'normal'
+    easing: 'easeOutBack', 
+    // easings.net accepted or cubic-bezier (string) | default: 'linear'
+    delay: 200, 
+    // delay before animation start (number, object) | default: 0
+    endDelay: 0, 
+    // delay after animation finished (number, object) | default: 0
+    iterations: 3, 
+    // times the animation is executed (positive number or Infinity) | default: 1
+    iterationStart: 1.2, 
+    // select at which iteration animation start (number) | default: 0
+    fill: 'both', 
+    // apply the style to your targets 'none', 'auto', 'backwards', 'forwards', 'both' (string) | default: 'both',
+    composite: 'replace', 
+    // choose how each keyframe impact the style, 'replace', 'add', 'accumulate' | default: 'replace'
+    playbackRate: 1, 
+    // choose the speed of your animation without changing duration (+ / - number) | default: 1
+    autoplay: false, 
+    // start animation when ready (boolean) | default: false
+    commitStyles: false, 
+    // option that apply css style to targets after animation finished | default: false
+    autocancel: false, 
+    // remove animation from browser at the end | default: false
+    willChange: false, 
+    // add and remove automatically a 'will-change: transform' to your target during animation | default: false
   }
 )
 
@@ -169,7 +183,7 @@ Go back to first frame and pause animation.
 Go back to first frame and play animation.
 
 #### .finish()
-Go back to the last frame animation.
+Go to the last frame animation.
 
 #### .cancel()
 Stop and remove animation from browser.
@@ -280,7 +294,7 @@ const tl = timeline(
   {autoplay: false, iterations: Infinity, direction: 'alternate'}
 )
 
-timeline.play();
+tl.play();
 ```
 
 ### Animation start

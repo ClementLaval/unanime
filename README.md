@@ -168,7 +168,7 @@ const tl = timeline(
 tl.play();
 ```
 &nbsp;
-## Methods
+# Methods
 
 Player
 ---
@@ -204,8 +204,8 @@ setTimeout(() => {
   myAnimation.pause();
 }, 2500);
 ```
-
 &nbsp;
+
 Getters
 ---
 
@@ -228,8 +228,9 @@ Return the current progression (from 0 to 1).
 myAnimation.getPlayState();
 // 'running'
 ```
-
 &nbsp;
+
+
 Setters
 ---
 
@@ -248,8 +249,8 @@ Set the option commitStyles to true or false.
 ```JS
 myAnimation.setDirection('alternate');
 ```
-
 &nbsp;
+
 Events
 ---
 

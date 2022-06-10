@@ -2,10 +2,15 @@
 
 ***<div align="center">Javascript animation library build on top of web animation API (WAAPI).</div>***
 
-<div align="center">Learn more about WAAPI:
-</div>
-[Web animation API Doc ](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API)
+<div align="center">
 
+&nbsp;
+Learn more about WAAPI:
+
+[Web animation API Documentation](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API)
+
+[Blog Daniel C. Wilson](https://danielcwilson.com/blog/2015/07/animations-intro/)
+</div>
 
 &nbsp;
 
@@ -361,3 +366,4 @@ Use ***NUMBER*** to change the absolute position of your animation.
 {animate: myAnimation2, start: 6500} // start at 6500ms after the timeline started
 ```
 
+---

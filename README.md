@@ -287,12 +287,12 @@ You can change the start point of each animations within the timeline by adding 
 Use ***STRING*** to change the relative position of your animation.
 
 ```JS
-{animate: myAnimation2, start: '+200'}, // +200ms from the relative start
+{animate: myAnimation1, start: '+200'}, // +200ms from the relative start
 {animate: myAnimation2, start: '-600'},
-{animate: myAnimation2, start: '<'}, // start with the previous animation
-{animate: myAnimation2, start: '<<<'}, // previous * 3
-{animate: myAnimation2, start: '<<+800'},
-{animate: myAnimation2, start: '<-1200'}
+{animate: myAnimation3, start: '<'}, // start with the previous animation
+{animate: myAnimation4, start: '<<<'}, // previous * 3 (myAnimation1)
+{animate: myAnimation5, start: '<<+800'},
+{animate: myAnimation6, start: '<-1200'}
 ```
 
 ### Absolute position

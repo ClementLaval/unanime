@@ -110,7 +110,7 @@ const myAnimation = animate(
     duration: 1000, 
     // animation's duration in ms (number, object) | default: 1000
     direction: 'normal', 
-    // 'normal', 'reverse', 'alternate' (string) / default: 'normal'
+    // 'normal', 'reverse', 'alternate' (string) | default: 'normal'
     easing: 'easeOutBack', 
     // easings.net accepted or cubic-bezier (string) | default: 'linear'
     delay: 200, 
@@ -142,7 +142,7 @@ myAnimation.play();
 ```
 
 ## Running
-Animation is not running by default, you have two options: 
+Animation is not running by default, you have three options: 
 ```JS
 // Options
 { autoplay: true }
@@ -153,6 +153,18 @@ or
 ```JS
 // Method
 myAnimation.play();
+```
+
+or
+
+```JS
+// Use timeline
+const tl = timeline(
+  [
+    {animate: myAnimation}
+  ] 
+)
+tl.play();
 ```
 
 ## Methods

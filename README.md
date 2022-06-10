@@ -158,7 +158,7 @@ myAnimation.play();
 or
 
 ```JS
-// Use timeline
+// Timeline
 const tl = timeline(
   [
     {animate: myAnimation}
@@ -170,14 +170,6 @@ tl.play();
 ## Methods
 
 ### Player
-
-```JS
-myAnimation.play();
-
-setTimeout(() => {
-  myAnimation.pause();
-}, 2500);
-```
 
 #### .play()
 Start the animation.
@@ -203,12 +195,15 @@ Stop and remove animation from browser.
 #### .seek(number)
 Go to a specific moment of animation (number from 0 to 1).
 
-### Getters
-
 ```JS
-myAnimation.getPlayState();
-// 'running'
+myAnimation.play();
+
+setTimeout(() => {
+  myAnimation.pause();
+}, 2500);
 ```
+
+### Getters
 
 #### .getDuration()
 Return the total duration with duration, delays, iterations ...
@@ -225,11 +220,12 @@ Return the current playbackRate.
 #### .getProgress() // Soon
 Return the current progression (from 0 to 1).
 
-### Setters
-
 ```JS
-myAnimation.setDirection('alternate');
+myAnimation.getPlayState();
+// 'running'
 ```
+
+### Setters
 
 #### .setDirection(string)
 Set a new direction ('normal', 'reverse', 'alternate').
@@ -243,13 +239,11 @@ Set the option willChange to true or false.
 #### .setCommitStyles()
 Set the option commitStyles to true or false.
 
-### Events
-
 ```JS
-myAnimation.onready(() => {
-  console.log('Ready to play !');
-});
+myAnimation.setDirection('alternate');
 ```
+
+### Events
 
 #### .onready()
 Execute when animation is ready.
@@ -269,6 +263,11 @@ Execute when animation is removed (everytime the animation is paused/play or cha
 #### .oncancel()
 Execute when animation is canceled.
 
+```JS
+myAnimation.onready(() => {
+  console.log('Ready to play !');
+});
+```
 
 ## Stagger
 

@@ -341,11 +341,12 @@ const tl = timeline(
 
 tl.play();
 ```
-&nbsp;
+
+
 ### Animation start
+
 You can change the start point of each animations within the timeline by adding 'start'.
 
-&nbsp;
 ### Relative position
 Use ***STRING*** to change the relative position of your animation.
 
@@ -357,12 +358,10 @@ Use ***STRING*** to change the relative position of your animation.
 {animate: myAnimation5, start: '<<+800'},
 {animate: myAnimation6, start: '<-1200'}
 ```
-&nbsp;
+
 ### Absolute position
 Use ***NUMBER*** to change the absolute position of your animation.
 
 ```JS
 {animate: myAnimation2, start: 6500} // start at 6500ms after the timeline started
 ```
-
----

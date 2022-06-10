@@ -1,6 +1,6 @@
 {
   "name": "unanime",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Animation library build on top of web animation API (WAAPI)",
   "main": "./lib/index.js",
   "scripts": {
@@ -11,7 +11,9 @@
     "url": "git+https://github.com/ClementLaval/unanime.git"
   },
   "keywords": [
-    "waapi"
+    "waapi",
+    "animation",
+    "css"
   ],
   "author": "Clément Laval <contact@clementlaval.fr>",
   "files": ["lib"],

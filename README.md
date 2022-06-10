@@ -169,7 +169,10 @@ tl.play();
 
 ## Methods
 
+
+&nbsp;
 ### Player
+---
 
 #### .play()
 Start the animation.
@@ -203,7 +206,9 @@ setTimeout(() => {
 }, 2500);
 ```
 
+&nbsp;
 ### Getters
+---
 
 #### .getDuration()
 Return the total duration with duration, delays, iterations ...
@@ -225,8 +230,9 @@ myAnimation.getPlayState();
 // 'running'
 ```
 
+&nbsp;
 ### Setters
-
+---
 #### .setDirection(string)
 Set a new direction ('normal', 'reverse', 'alternate').
 
@@ -243,7 +249,9 @@ Set the option commitStyles to true or false.
 myAnimation.setDirection('alternate');
 ```
 
+&nbsp;
 ### Events
+---
 
 #### .onready()
 Execute when animation is ready.

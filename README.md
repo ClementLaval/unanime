@@ -129,7 +129,15 @@ myAnimation.play();
 
 ## Methods
 
-### <u>Player</u>
+### Player
+
+```JS
+myAnimation.play();
+
+setTimeout(() => {
+  myAnimation.pause();
+}, 2500);
+```
 
 ### .play()
 Start the animation.
@@ -155,7 +163,11 @@ Stop and remove animation from browser.
 ### .seek(number)
 Go to a specific moment of animation (number from 0 to 1).
 
-### <u>Getters</u>
+### Getters
+```JS
+myAnimation.getPlayState();
+// 'running'
+```
 
 ### .getDuration()
 Return the total duration with duration, delays, iterations ...
@@ -172,7 +184,10 @@ Return the current playbackRate.
 ### .getProgress() // Soon
 Return the current progression (from 0 to 1).
 
-### <u>Setters</u>
+### Setters
+```JS
+myAnimation.setDirection('alternate');
+```
 
 ### .setDirection(string)
 Set a new direction ('normal', 'reverse', 'alternate').
@@ -186,7 +201,12 @@ Set the option willChange to true or false.
 ### .setCommitStyles()
 Set the option commitStyles to true or false.
 
-### <u>Events</u>
+### Events
+```JS
+myAnimation.onready(() => {
+  console.log('Ready to play !');
+});
+```
 
 ### .onready()
 Execute when animation is ready.
@@ -217,4 +237,43 @@ Stagger can be used on every options property you want.
   delay: {stagger: 200},
   duration: {default: 2500, stagger: 100}
 }
-````
+```
+
+## Timeline
+
+```JS
+import { animate, timeline } from 'unanime';
+
+const tl = timeline(
+  // Animations list
+  [
+    { animate: myAnimation1},
+    { animate: myAnimation2, start: '<+800'},
+  ],
+  // Timeline options
+  {autoplay: true, iterations: Infinity, direction: 'alternate'}
+)
+```
+
+### Animation start
+You can change the start point of each animations within the timeline by adding 'start'.
+
+### Relative position
+Use ***STRING*** to change the relative position of your animation.
+
+```JS
+{animate: myAnimation2, start: '+200'}, // +200ms from the relative start
+{animate: myAnimation2, start: '-600'},
+{animate: myAnimation2, start: '<'}, // start with the previous animation
+{animate: myAnimation2, start: '<<<'}, // previous * 3
+{animate: myAnimation2, start: '<<+800'},
+{animate: myAnimation2, start: '<-1200'}
+```
+
+### Absolute position
+Use ***NUMBER*** to change the absolute position of your animation.
+
+```JS
+{animate: myAnimation2, start: 6500} // start at 6500ms after the timeline started
+```
+

@@ -46,7 +46,7 @@ import { animate } from 'unanime';
 const myAnimation = animate(
   '.targets', 
   [
-    {transform: translateX('100px')}
+    {transform: 'translateX(100px)'}
   ],
   {
     duration: 1500,

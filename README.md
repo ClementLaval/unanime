@@ -124,7 +124,7 @@ const myAnimation = animate(
     direction: 'normal', 
     // 'normal', 'reverse', 'alternate' (string) | default: 'normal'
     easing: 'easeOutBack', 
-    // easings.net accepted or cubic-bezier (string) | default: 'linear'
+    // easings.net accepted, basic css or cubic-bezier (string) | default: 'linear'
     delay: 200, 
     // delay before animation start (number, object) | default: 0
     endDelay: 0, 
@@ -303,18 +303,23 @@ myAnimation.onready(() => {
 &nbsp;
 ## Stagger
 
-Stagger can be used on every options property you want.
+Stagger can be used on every options property who takes a number.
 
 ```JS
 // Options
 {
   delay: {stagger: 200},
-  duration: {default: 2500, stagger: 100}
+  duration: {default: 2500, stagger: 100},
+  iterations: {default: 4, stagger: 0.05},
+  iterationStart: {default: 1, stagger: 0.02},
+  playbackRate: {default: 1, stagger: 0.05},
+  ...
 }
 ```
 
 ### Easing stagger
 Easing can accept an array to set different easing on each elements of your targets.
+You can directly use this [list of easing](https://easings.net/) as string.
 ```JS
 // Options
 {

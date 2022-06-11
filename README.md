@@ -323,7 +323,7 @@ You can directly use this [list of easing](https://easings.net/) as string.
 ```JS
 // Options
 {
-  easing: ['easingInCirc', null, 'ease-out', 'cubic-bezier(.17,.67,.83,.67)'] 
+  easing: ['easeInCirc', null, 'ease-out', 'cubic-bezier(.17,.67,.83,.67)'] 
   // if null, get previous easing
 }
 ```

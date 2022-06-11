@@ -30,7 +30,6 @@ export function setWillChange(status = false, animationsArray, animate){
   }
 }
 
-
 export function setDirection(value = 'normal', animationsArray, animate){
   animationsArray.map(animationIndex => {
     animationIndex.forEach(animation => {

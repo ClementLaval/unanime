@@ -69,9 +69,12 @@ export function getOptionsDisplay(options, optionsComputed){
 
   const optionsDisplay = {
     ...optionsComputed,
-    duration: options.duration || 0,
+    easing: options.easing || 'linear',
+    duration: options.duration || 1000,
     delay: options.delay || 0,
-    endDelay: options.endDelay || 0   
+    endDelay: options.endDelay || 0,
+    iterations: options.iterations || 1,   
+    iterationStart: options.iterationStart || 0,
   }
 
   return optionsDisplay;

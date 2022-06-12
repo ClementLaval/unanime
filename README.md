@@ -337,6 +337,16 @@ or
 [2, 7, 13] // select multiple starting points
 ```
 
+&nbsp;
+
+### direction:
+Select the propagation's direction.
+
+```JS
+'start' // default
+or
+'reverse'
+```
 
 &nbsp;
 

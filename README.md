@@ -316,7 +316,8 @@ Staggering allows you to animate multiple elements with follow through and overl
 ### Structure
 ```JS
 // Options
-{yourOption: {
+{ yourOption: {
+    default: 0, // initial value of your option added to stagger | default: option's default
     stagger: 100, // amount that will be multiplied by array index (number) | default: 0
     from: 3, // choose the starting point of your stagger propagation (string, number, array) | default: 'start'
     direction: 'reverse' // select the way stagger in computed (string) | default: 'normal'

@@ -134,7 +134,7 @@ const myAnimation = animate(
     iterationStart: 1.2, 
     // select at which iteration animation start (number) | default: 0
     fill: 'both', 
-    // apply the style to your targets 'none', 'auto', 'backwards', 'forwards', 'both' (string) | default: 'both',
+    // apply the style to your targets 'none', 'auto', 'backwards', 'forwards', 'both' (string) | default: 'both'
     composite: 'replace', 
     // choose how each keyframe impact the style, 'replace', 'add', 'accumulate' | default: 'replace'
     playbackRate: 1, 

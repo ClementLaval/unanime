@@ -303,8 +303,45 @@ myAnimation.onready(() => {
 &nbsp;
 ## Stagger
 
-Stagger can be used on every options property who takes a number.
+Staggering allows you to animate multiple elements with follow through and overlapping action.
 
+
+*Example:*
+```JS
+// Options
+{delay: {stagger: 100, from: 'center', direction: 'normal'}}
+```
+
+&nbsp;
+### Structure
+```JS
+// Options
+{yourOption: {
+    stagger: 100, // amount that will be multiplied by array index (number) | default: 0
+    from: 3, // choose the starting point of your stagger propagation (string, number, array) | default: 'start'
+    direction: 'reverse' // select the way stagger in computed (string) | default: 'normal'
+  }
+}
+```
+
+&nbsp;
+
+### from:
+There are different ways to set 'from' option in stagger object.
+
+```JS
+'start', 'center', 'end' // select one mode
+or
+10 // select array index(+1)
+or
+[2, 7, 13] // select multiple starting points
+```
+
+
+&nbsp;
+
+Stagger can be used on every options property who takes a number.
+*Example:*
 ```JS
 // Options
 {

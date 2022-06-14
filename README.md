@@ -141,6 +141,8 @@ const myAnimation = animate(
     // choose the speed of your animation without changing duration (+ / - number) | default: 1
     autoplay: false, 
     // start animation when ready (boolean) | default: false
+    initStyles: true,
+    // option that apply css style (first keyframes) to the target | default: false
     commitStyles: false, 
     // option that apply css style to targets after animation finished | default: false
     autocancel: false, 
@@ -260,7 +262,10 @@ Set a new playbackRate ( + / - number). Change the speed of animation.
 #### .setWillChange(boolean)
 Set the option willChange to true or false.
 
-#### .setCommitStyles()
+#### .setInitStyles(boolean)
+Set the option initStyles to true or false.
+
+#### .setCommitStyles(boolean)
 Set the option commitStyles to true or false.
 
 &nbsp;
@@ -344,7 +349,7 @@ or
 Select the propagation's direction.
 
 ```JS
-'start' // default
+'normal' // default
 or
 'reverse'
 ```

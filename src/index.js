@@ -3,7 +3,7 @@ import { onfinish, onready, oncancel, onremove, onplay, onpause } from './events
 import { getTargets } from './targets.js';
 import { getOptionsDisplay } from './options.js';
 import { getDuration, getPlayState, getCurrentIteration, getPlaybackRate, getProgress } from './getters.js';
-import { setPlaybackRate, setWillChange, setDirection, setCommitStyles } from './setters.js';
+import { setPlaybackRate, setWillChange, setDirection, setCommitStyles, setInitStyles } from './setters.js';
 import { timeline } from './timeline.js';
 import { initAnimations } from './initAnimations.js';
 import { initFeatures } from './initFeatures.js';
@@ -43,7 +43,8 @@ function animate(targets, keyframes, options){
     setPlaybackRate: (value) => setPlaybackRate(value, animationsArray, animate),
     setWillChange: (status) => setWillChange(status, animationsArray, animate),
     setDirection: (value) => setDirection(value, animationsArray, animate),
-    setCommitStyles: (status) => setCommitStyles(status, animationsArray, animate)
+    setCommitStyles: (status) => setCommitStyles(status, animationsArray, animate),
+    setInitStyles: (status) => setInitStyles(status, animationsArray, animate)
   }
    
   // Features

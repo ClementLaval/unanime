@@ -50,12 +50,11 @@ export function setCommitStyles(status = false, animationsArray, animate){
 
 export function setInitStyles(status = false, animationsArray, animate){
   animationsArray.map(animationIndex => {
-    animationIndex.forEach(animation => {
-      const stylesLength = JSON.stringify(animate.keyframes[0]).length;
-      let styles = JSON.stringify(animate.keyframes[0]).substring(1, stylesLength - 1);
-      styles = styles.replace(/['"]+/g, '');
+    animationIndex.forEach(animation => {      
       const target = animation.effect.target;
-      target.style.cssText = styles; 
+      for (const [key, value] of Object.entries(animate.keyframes[0])) {
+        target.style.cssText = `${key}: ${value}`;
+      }
     })
   })
   refreshOptionsDisplay('initStyles', status, animate); 

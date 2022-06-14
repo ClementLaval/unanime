@@ -1,4 +1,4 @@
-import { refreshOptionsDisplay } from "./options";
+import { refreshOptionsDisplay } from "./options.js";
 
 export function setPlaybackRate(value = 1, animationsArray, animate){
   animationsArray.map(animationIndex => {

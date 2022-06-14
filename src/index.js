@@ -1,12 +1,12 @@
-import { play, pause, restart, cancel, reset, finish, reverse, seek } from './player';
-import { onfinish, onready, oncancel, onremove, onplay, onpause } from './events';
-import { getTargets } from './targets';
-import { getOptionsDisplay } from './options';
-import { getDuration, getPlayState, getCurrentIteration, getPlaybackRate, getProgress } from './getters';
-import { setPlaybackRate, setWillChange, setDirection, setCommitStyles } from './setters';
-import { timeline } from './timeline';
-import { initAnimations } from './initAnimations';
-import { initFeatures } from './initFeatures';
+import { play, pause, restart, cancel, reset, finish, reverse, seek } from './player.js';
+import { onfinish, onready, oncancel, onremove, onplay, onpause } from './events.js';
+import { getTargets } from './targets.js';
+import { getOptionsDisplay } from './options.js';
+import { getDuration, getPlayState, getCurrentIteration, getPlaybackRate, getProgress } from './getters.js';
+import { setPlaybackRate, setWillChange, setDirection, setCommitStyles } from './setters.js';
+import { timeline } from './timeline.js';
+import { initAnimations } from './initAnimations.js';
+import { initFeatures } from './initFeatures.js';
 
 function animate(targets, keyframes, options){
   
@@ -33,7 +33,6 @@ function animate(targets, keyframes, options){
     onremove: (action) => onremove(action, animationsArray), //TO DO
     onplay: (action) => onplay(action, animate),  
     onpause: (action) => onpause(action, animate),
-
     // Getters
     getDuration: () => getDuration(animationsArray),
     getPlayState: () => getPlayState(animationsArray),

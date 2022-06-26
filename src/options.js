@@ -1,4 +1,5 @@
-import {easing as setEasing} from './easing.js';
+import { easing as setEasing } from './easing.js';
+import { stagger } from './stagger.js';
 
 export function setOptions(options, index, targetIndexLength){
   // Basic options
@@ -20,6 +21,7 @@ export function setOptions(options, index, targetIndexLength){
   const willChange = returnValue(options.willChange, index, targetIndexLength) || false;  
   const commitStyles = returnValue(options.commitStyles, index, targetIndexLength) || false;
   const initStyles = returnValue(options.initStyles, index, targetIndexLength) || false;
+  const observer = (options.observer) || null;
   
   return {  
     delay, 
@@ -37,7 +39,8 @@ export function setOptions(options, index, targetIndexLength){
     playbackRate,
     willChange,
     commitStyles,
-    initStyles
+    initStyles,
+    observer
   };   
 }  
 
@@ -60,68 +63,6 @@ function returnValue(input, index, targetIndexLength){
   }
 }
 
-export function stagger(input, index, targetIndexLength){
-  const init = input.default || 0;
-  const stagger = input.stagger || 0;
-  const from = input.from || 'start'; // 'start, 'center', 'end'
-  const direction = input.direction || 'normal'; // 'normal', 'reverse'
-  
-  if((from === 'start' && direction === 'normal') || (from === 'end' && direction === 'reverse')){
-    return init + (stagger * index); 
-  }
-  else if((from === 'end' && direction === 'normal') || (from === 'start' && direction === 'reverse')){
-    return init + (stagger * (targetIndexLength - index));
-  }
-  else if(from === 'center' && direction === 'normal'){
-    const arrayCenter = (targetIndexLength - 1) / 2;
-    const gap = arrayCenter - index;
-    return init + (stagger * Math.abs(gap));
-  }
-  else if(from === 'center' && direction === 'reverse'){
-    let gap = [];
-    [1, targetIndexLength].map(fromIndex => {
-      gap.push(Math.abs(fromIndex - (index + 1)));
-    })
-    gap = Math.min(...gap);
-    return init + (stagger * Math.abs(gap));
-  } 
-  else if(typeof from === 'number' && direction === 'normal'){
-    const gap = from - (index + 1);
-    return init + (stagger * Math.abs(gap));
-  }
-  else if(typeof from === 'number' && direction === 'reverse'){  
-    const max = (targetIndexLength - 1) - from;
-    const ratio = (index + 1) - from;
-    const reverse = max - Math.abs(ratio);
-    return init + (stagger * reverse);
-  }
-  else if(Array.isArray(from) && direction === 'normal'){
-    let gap = [];
-    from.map(fromIndex => {
-      gap.push(Math.abs(fromIndex - (index + 1)));
-    })
-    gap = Math.min(...gap);
-    return init + (stagger * Math.abs(gap));
-  } 
-  else if(Array.isArray(from) && direction === 'reverse'){
-    let max = [];
-    from.map(fromIndex => {
-      max.push((targetIndexLength) - fromIndex);
-    })
-    max = Math.min(...max);
-
-    let ratio = [];
-    from.map(fromIndex => {
-      ratio.push(Math.abs(fromIndex - (index + 1)));
-    })
-    ratio = Math.min(...ratio);
-    
-    const reverse = max - Math.abs(ratio);    
-    
-    return init + (stagger * reverse);
-  } 
-}
-
 export function getOptionsDisplay(options, optionsComputed){
 
   const optionsDisplay = {
@@ -132,6 +73,7 @@ export function getOptionsDisplay(options, optionsComputed){
     endDelay: options.endDelay || 0,
     iterations: options.iterations || 1,   
     iterationStart: options.iterationStart || 0,
+    observer: options.observer || null
   }
 
   return optionsDisplay;

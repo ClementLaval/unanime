@@ -11,7 +11,8 @@ export async function initObserver(options, animate){
   let target = document.querySelector(options.target) || animate.targets[0];
   const targetMargin = options.targetMargin || '0px';
   const once = options.once || false;
-  const markers = options.markers || false;  
+  const markers = options.markers || false;
+  const refreshInterval = options.refreshInterval || 5000;  
 
   // Create target overlay
   target = await setTargetOverlay(target, targetMargin);
@@ -33,7 +34,7 @@ export async function initObserver(options, animate){
 
   observer.observe(target);
   
-  // Refresh
+  // Check resize
   let isRefreshing;
   const resizeListener = window.addEventListener('resize', () => {
     if(isRefreshing) return;
@@ -44,12 +45,13 @@ export async function initObserver(options, animate){
     }, 2500);
   }, false);
 
+  // Check body height
   let previousBodyHeight;
   setInterval(() => {
     const bodyHeight = document.body.getBoundingClientRect().height;
     if(bodyHeight !== previousBodyHeight) refresh();
     previousBodyHeight = bodyHeight;
-  }, 3000);
+  }, refreshInterval);
 
   async function refresh(){  
     animate.options.observer.target.remove();

@@ -1,6 +1,6 @@
 import { sleep } from './utils.js'
 
-export async function observer(options, animate){
+export async function initObserver(options, animate){
   // Basic options
   const optionsObserver = {
     root: document.querySelector(options.root) || null,
@@ -17,7 +17,7 @@ export async function observer(options, animate){
   target = await setTargetOverlay(target, targetMargin);
 
   // Markers
-  if(markers) displayMarkers(optionsObserver, target);  
+  if(markers) displayMarkers(optionsObserver, target);
   
   // Refresh Options Display
   animate.options.observer = {
@@ -28,25 +28,40 @@ export async function observer(options, animate){
     once: once,
     markers: markers
   } 
-  
-  observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate), optionsObserver);
-  
+
+  let observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate), optionsObserver);
+
   observer.observe(target);
   
-  // async function refresh(){
-  //   target = document.querySelector(options.target) || animate.targets[0];
-  //   target = await setTargetOverlay(target, targetMargin);
-  //   if(markers) displayMarkers(optionsObserver, target);
-  //   observer.disconnect();
-  //   observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate), optionsObserver);
+  // Refresh
+  let isRefreshing;
+  const resizeListener = window.addEventListener('resize', () => {
+    if(isRefreshing) return;
+    isRefreshing = true;
+    setTimeout(() => {
+      isRefreshing = false;
+      refresh();
+    }, 2500);
+  }, false);
 
-  //   observer.observe(target);
-  // }
-  // window.addEventListener('resize', () => {
-  //   refresh();
+  let previousBodyHeight;
+  setInterval(() => {
+    const bodyHeight = document.body.getBoundingClientRect().height;
+    if(bodyHeight !== previousBodyHeight) refresh();
+    previousBodyHeight = bodyHeight;
+  }, 3000);
 
-  // })
+  async function refresh(){  
+    animate.options.observer.target.remove();
+    observer.disconnect();  
+    target = document.querySelector(options.target) || animate.targets[0];
+    target = await setTargetOverlay(target, targetMargin);
+    if(markers) displayMarkers(optionsObserver, target);
+    observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate), optionsObserver);
+    observer.observe(target);
+  }
 }
+
 
 function getThreshold(input){
   if(!input) return null;
@@ -92,7 +107,7 @@ async function displayMarkers(options, target){
 
   const rootMarker = document.createElement('div');
   rootMarker.innerText = 'root';
-  rootMarker.style.cssText = `color: black; border-bottom: 1px dashed gray; background-color: hsl(259, 90%, 54%, 0.03); position: fixed; inset: ${reverseNumber(marginTop)} ${reverseNumber(marginRight)} ${reverseNumber(marginBottom)} ${reverseNumber(marginLeft)}; z-index: 1000; text-align: right; padding-right: 4px; pointer-events: none;`
+  rootMarker.style.cssText = `color: black; border: 1px dashed gray; background-color: hsl(259, 90%, 54%, 0.03); position: fixed; inset: ${reverseNumber(marginTop)} ${reverseNumber(marginRight)} ${reverseNumber(marginBottom)} ${reverseNumber(marginLeft)}; z-index: 1000; text-align: right; padding-right: 4px; pointer-events: none;`
   document.body.appendChild(rootMarker); 
 
   thresholds.forEach(threshold => {

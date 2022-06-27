@@ -1,5 +1,5 @@
 import { refreshOptionsDisplay } from "./options.js";
-import { observer as initObserver } from "./observer.js";
+import { initObserver } from "./observer.js";
 
 export function setPlaybackRate(value = 1, animationsArray, animate){
   animationsArray.map(animationIndex => {

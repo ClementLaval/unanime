@@ -12,7 +12,7 @@ export async function initObserver(options, animate){
   const targetMargin = options.targetMargin || '0px';
   const once = options.once || false;
   const markers = options.markers || false;
-  const refreshInterval = options.refreshInterval || 5000;  
+  const refreshInterval = options.refreshInterval === -1 ? -1 : false  || 5000;  
 
   // Create target overlay
   target = await setTargetOverlay(target, targetMargin);
@@ -46,12 +46,14 @@ export async function initObserver(options, animate){
   }, false);
 
   // Check body height
-  let previousBodyHeight;
-  setInterval(() => {
-    const bodyHeight = document.body.getBoundingClientRect().height;
-    if(bodyHeight !== previousBodyHeight) refresh();
-    previousBodyHeight = bodyHeight;
-  }, refreshInterval);
+  if(refreshInterval && refreshInterval > 0){
+    let previousBodyHeight;
+    setInterval(() => {
+      const bodyHeight = document.body.getBoundingClientRect().height;
+      if(bodyHeight !== previousBodyHeight) refresh();
+      previousBodyHeight = bodyHeight;
+    }, refreshInterval);
+  }
 
   async function refresh(){  
     animate.options.observer.target.remove();

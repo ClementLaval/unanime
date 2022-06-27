@@ -29,7 +29,7 @@ export async function observer(options, animate){
     markers: markers
   } 
 
-  observer = new IntersectionObserver(() => handleIntersect(animate), optionsObserver);
+  observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate), optionsObserver);
 
   observer.observe(target);
 }
@@ -65,7 +65,6 @@ async function displayMarkers(options, target){
   const rootMargin =  getComputedMargin(options.rootMargin);
   const {marginTop, marginRight, marginBottom, marginLeft} = rootMargin;
   const thresholds =  Array.isArray(options.threshold) ? options.threshold : [options.threshold];
-  // const rootOffset = options.root ? (document.querySelector(options.root).clientHeight * offset) : window.innerHeight * offset;
 
   const startMarker = document.createElement('div');
   startMarker.innerText = 'start';
@@ -141,6 +140,18 @@ async function setTargetOverlay(target, targetMargin){
   return targetOverlay;
 }
 
-function handleIntersect(animate){
-  animate.play();
+let prevRatio = 0;
+function handleIntersect(entries, observer, animate){
+  entries.forEach(function(entry) {
+    if(entry.intersectionRatio > prevRatio && entry.isIntersecting && entry.intersectionRect.top !== 0){
+      console.log('ENTER');
+    }else if(entry.intersectionRatio < prevRatio && !entry.isIntersecting && entry.intersectionRect.top === 0){
+      console.log('LEAVE');
+    }else if (entry.intersectionRatio > prevRatio && entry.isIntersecting && entry.intersectionRect.top === 0){
+      console.log('ENTER TOP')
+    }else if(entry.intersectionRatio < prevRatio && !entry.isIntersecting && entry.intersectionRect.top !== 0){
+      console.log('LEAVE TOP');
+    }
+    prevRatio = entry.intersectionRatio;
+  });
 }

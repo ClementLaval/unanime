@@ -17,7 +17,7 @@ export async function observer(options, animate){
   target = await setTargetOverlay(target, targetMargin);
 
   // Markers
-  if(markers) displayMarkers(optionsObserver, target);
+  if(markers) displayMarkers(optionsObserver, target);  
   
   // Refresh Options Display
   animate.options.observer = {
@@ -28,10 +28,24 @@ export async function observer(options, animate){
     once: once,
     markers: markers
   } 
-
+  
   observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate), optionsObserver);
-
+  
   observer.observe(target);
+  
+  // async function refresh(){
+  //   target = document.querySelector(options.target) || animate.targets[0];
+  //   target = await setTargetOverlay(target, targetMargin);
+  //   if(markers) displayMarkers(optionsObserver, target);
+  //   observer.disconnect();
+  //   observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate), optionsObserver);
+
+  //   observer.observe(target);
+  // }
+  // window.addEventListener('resize', () => {
+  //   refresh();
+
+  // })
 }
 
 function getThreshold(input){

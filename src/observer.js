@@ -56,10 +56,6 @@ function buildThresholdList(numSteps) {
   return thresholds;
 }
 
-function handleIntersect(animate){
-  animate.play();
-}
-
 async function displayMarkers(options, target){
   await sleep(100);    
   const bodyRect = document.body.getBoundingClientRect();
@@ -83,7 +79,7 @@ async function displayMarkers(options, target){
 
   const rootMarker = document.createElement('div');
   rootMarker.innerText = 'root';
-  rootMarker.style.cssText = `background-color: hsl(259, 90%, 54%, 0.03); position: fixed; inset: ${reverseNumber(marginTop)} ${reverseNumber(marginRight)} ${reverseNumber(marginBottom)} ${reverseNumber(marginLeft)}; z-index: 1000; text-align: right; padding-right: 4px; pointer-events: none;`
+  rootMarker.style.cssText = `color: black; border-bottom: 1px dashed gray; background-color: hsl(259, 90%, 54%, 0.03); position: fixed; inset: ${reverseNumber(marginTop)} ${reverseNumber(marginRight)} ${reverseNumber(marginBottom)} ${reverseNumber(marginLeft)}; z-index: 1000; text-align: right; padding-right: 4px; pointer-events: none;`
   document.body.appendChild(rootMarker); 
 
   thresholds.forEach(threshold => {
@@ -92,6 +88,9 @@ async function displayMarkers(options, target){
     thresholdMarker.style.cssText = `background-color: hsl(100, 90%, 54%, ${thresholds.length > 3 ? thresholds.length / 100 : '0.3'}); position: absolute; top: ${startOffset}px; right: 0; width: 20px; height: ${markerHeight}px; z-index: 999; pointer-events: none;`
     document.body.appendChild(thresholdMarker);
   });
+
+  target.style.opacity = '0.4';
+  target.style.backgroundColor = 'hsl(60, 54%, 80%)';
 }
 
 function getComputedMargin(inputMargin, targetRect){
@@ -133,12 +132,15 @@ async function setTargetOverlay(target, targetMargin){
   const bodyRect = document.body.getBoundingClientRect();
   const targetRect = target.getBoundingClientRect();
   const startOffset = targetRect.top - bodyRect.top; 
-  const endOffset = startOffset + targetRect.height;
   const {marginTop, marginRight, marginBottom, marginLeft} = getComputedMargin(targetMargin, targetRect);
   const targetOverlay = document.createElement('div');
   targetOverlay.innerText = 'target';
-  targetOverlay.style.cssText = `width: calc(${targetRect.width}px + ${marginRight} + ${marginLeft}); height: calc(${targetRect.height}px + ${marginTop} + ${marginBottom}); position: absolute; top: calc(${startOffset}px - ${marginTop}); left: calc(${targetRect.left}px - ${marginLeft}); z-index: 1000; pointer-events: none; opacity: 0.5; text-align: right; padding-right: 4px; background-color: hsl(60, 54%, 80%);`;
+  targetOverlay.style.cssText = `width: calc(${targetRect.width}px + ${marginRight} + ${marginLeft}); height: calc(${targetRect.height}px + ${marginTop} + ${marginBottom}); position: absolute; top: calc(${startOffset}px - ${marginTop}); left: calc(${targetRect.left}px - ${marginLeft}); z-index: 1000; pointer-events: none; opacity: 0; text-align: right; padding-right: 4px;`;
   targetOverlay.id = target.id ? `${target.id}-observer-overlay`: `${target.className.split(" ")[0]}-observer-overlay`;
   document.body.appendChild(targetOverlay);
   return targetOverlay;
+}
+
+function handleIntersect(animate){
+  animate.play();
 }

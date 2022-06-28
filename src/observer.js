@@ -79,9 +79,10 @@ export async function initObserver(options, animate){
   async function refresh(){  
     animate.options.observer.target.remove();
     observer.disconnect();  
+    removeMarkers(markers);
     extraOptions.target = document.querySelector(options.target) || animate.targets[0];
     extraOptions.target = await setTargetOverlay(extraOptions);
-    if(extraOptions.markers) displayMarkers(mainOptions, extraOptions.target);
+    if(extraOptions.markers) markers = await displayMarkers(mainOptions, extraOptions.target);
     observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, extraOptions, triggers, markers), mainOptions);
     observer.observe(extraOptions.target);
     if(triggers.onRefresh) triggers.onRefresh();

@@ -34,8 +34,9 @@ export async function initObserver(options, animate){
   extraOptions.target = await setTargetOverlay(extraOptions);
 
   // Markers
-  if(extraOptions.markers) displayMarkers(mainOptions, extraOptions.target);
-  
+  let markers;
+  if(extraOptions.markers) markers =  await displayMarkers(mainOptions, extraOptions.target);   
+
   // Refresh Options Display
   animate.options.observer = {
     target: extraOptions.target,
@@ -47,7 +48,7 @@ export async function initObserver(options, animate){
     markers: extraOptions.markers
   } 
 
-  let observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, extraOptions, triggers), mainOptions);
+  let observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, extraOptions, triggers, markers), mainOptions);
 
   observer.observe(extraOptions.target);
   
@@ -81,7 +82,7 @@ export async function initObserver(options, animate){
     extraOptions.target = document.querySelector(options.target) || animate.targets[0];
     extraOptions.target = await setTargetOverlay(extraOptions);
     if(extraOptions.markers) displayMarkers(mainOptions, extraOptions.target);
-    observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, extraOptions, triggers), mainOptions);
+    observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, extraOptions, triggers, markers), mainOptions);
     observer.observe(extraOptions.target);
     if(triggers.onRefresh) triggers.onRefresh();
   }
@@ -137,15 +138,19 @@ async function displayMarkers(options, target){
   rootMarker.style.cssText = `color: black; border: 1px dashed gray; background-color: hsl(259, 90%, 54%, 0.03); position: fixed; inset: ${reverseNumber(marginTop)} ${reverseNumber(marginRight)} ${reverseNumber(marginBottom)} ${reverseNumber(marginLeft)}; z-index: 1000; text-align: right; padding-right: 4px; pointer-events: none;`
   document.body.appendChild(rootMarker); 
 
+  let thresholdsMarkers = [];
   thresholds.forEach(threshold => {
     const thresholdMarker = document.createElement('div');
     const markerHeight = targetRect.height * threshold;
     thresholdMarker.style.cssText = `background-color: hsl(100, 90%, 54%, ${thresholds.length > 3 ? thresholds.length / 100 : '0.3'}); position: absolute; top: ${startOffset}px; right: 0; width: 20px; height: ${markerHeight}px; z-index: 999; pointer-events: none;`
     document.body.appendChild(thresholdMarker);
+    thresholdsMarkers.push(thresholdMarker);
   });
 
   target.style.opacity = '0.4';
   target.style.backgroundColor = 'hsl(60, 54%, 80%)';
+
+  return {startMarker, endMarker, rootMarker, target, thresholdsMarkers};
 }
 
 // Detect margin string and return computed value
@@ -176,6 +181,7 @@ function getSizeWithPercent(value, targetSize){
   return (Number(value.replace('%', '')) * targetSize) / 100 + 'px';
 }
 
+// Reverse +/- string
 function reverseNumber(value){
   if(value.startsWith('-')){
     return value.substring(1);
@@ -199,27 +205,6 @@ async function setTargetOverlay(extraOptions){
   return targetOverlay;
 }
 
-// Handle Intersect
-let prevRatio = 0;
-function handleIntersect(entries, observer, animate, extraOptions, triggers){
-  entries.forEach(function(entry) {
-    if(entry.intersectionRatio > prevRatio && entry.isIntersecting && entry.intersectionRect.top !== 0){
-      if(extraOptions.toggleActions.onEnter) animate[extraOptions.toggleActions.onEnter]()
-      if(triggers.onEnter) triggers.onEnter();
-    }else if(entry.intersectionRatio < prevRatio && !entry.isIntersecting && entry.intersectionRect.top === 0){
-      if(extraOptions.toggleActions.onLeave) animate[extraOptions.toggleActions.onLeave]()
-      if(triggers.onLeave) triggers.onLeave();
-    }else if (entry.intersectionRatio > prevRatio && entry.isIntersecting && entry.intersectionRect.top === 0){
-      if(extraOptions.toggleActions.onEnterBack) animate[extraOptions.toggleActions.onEnterBack]()
-      if(triggers.onEnterBack) triggers.onEnterBack();
-    }else if(entry.intersectionRatio < prevRatio && !entry.isIntersecting && entry.intersectionRect.top !== 0){
-      if(extraOptions.toggleActions.onLeaveBack) animate[extraOptions.toggleActions.onLeaveBack]()
-      if(triggers.onLeaveBack) triggers.onLeaveBack();
-    }
-    prevRatio = entry.intersectionRatio;
-  });
-}
-
 // Toggle actions
 function getToggleActions(toggleActions){
   if(!toggleActions) return null;
@@ -235,6 +220,7 @@ function getToggleActions(toggleActions){
   }  
 }
 
+// Return the right action for each toggleAction
 function getAction(action){
   switch(action){
     case 'none':
@@ -264,4 +250,35 @@ function getAction(action){
     default:
       return '';   
   }
+}
+
+// Handle Intersect
+let prevRatio = 0;
+function handleIntersect(entries, observer, animate, extraOptions, triggers, markers){
+  entries.forEach(function(entry) {
+    if(entry.intersectionRatio > prevRatio && entry.isIntersecting && entry.intersectionRect.top !== 0){
+      if(extraOptions.toggleActions.onEnter) animate[extraOptions.toggleActions.onEnter]()
+      if(triggers.onEnter) triggers.onEnter();
+      if(extraOptions.once) animate.onFinish(() => removeMarkers(markers), observer.disconnect());
+    }else if(entry.intersectionRatio < prevRatio && !entry.isIntersecting && entry.intersectionRect.top === 0){
+      if(extraOptions.toggleActions.onLeave) animate[extraOptions.toggleActions.onLeave]()
+      if(triggers.onLeave) triggers.onLeave();
+    }else if (entry.intersectionRatio > prevRatio && entry.isIntersecting && entry.intersectionRect.top === 0){
+      if(extraOptions.toggleActions.onEnterBack) animate[extraOptions.toggleActions.onEnterBack]()
+      if(triggers.onEnterBack) triggers.onEnterBack();
+    }else if(entry.intersectionRatio < prevRatio && !entry.isIntersecting && entry.intersectionRect.top !== 0){
+      if(extraOptions.toggleActions.onLeaveBack) animate[extraOptions.toggleActions.onLeaveBack]()
+      if(triggers.onLeaveBack) triggers.onLeaveBack();
+    }
+    prevRatio = entry.intersectionRatio;
+  });
+}
+
+function removeMarkers(markers){
+  if(!markers) return;
+  markers.rootMarker.remove();
+  markers.target.remove();
+  markers.startMarker.remove();
+  markers.endMarker.remove();
+  markers.thresholdsMarkers.forEach(threshold => threshold.remove());
 }

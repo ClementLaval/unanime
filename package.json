@@ -1,6 +1,6 @@
 {
   "name": "unanime",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Animation library build on top of web animation API (WAAPI)",
   "main": "./lib/index.js",
   "type": "module",

@@ -63,7 +63,7 @@ export async function initObserver(options, animate){
       setTimeout(() => {
         isRefreshing = false;
         refresh();
-      }, 2500);
+      }, 2000);
     }, false);
   }
   

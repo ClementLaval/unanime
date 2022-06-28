@@ -1,5 +1,7 @@
 import { sleep } from './utils.js'
 
+export let refresh;
+
 export async function initObserver(options, animate){
 
   // Main options
@@ -76,7 +78,8 @@ export async function initObserver(options, animate){
     }, extraOptions.refreshInterval);
   }
 
-  async function refresh(){  
+  refresh = async (delay) => {  
+    if(delay) await sleep(delay);
     animate.options.observer.target.remove();
     observer.disconnect();  
     removeMarkers(markers);

@@ -239,7 +239,7 @@ function getAction(action){
     case 'resume':
       return 'play';
       break;
-    case 'finish':
+    case 'complete':
       return 'finish';
       break;
     case 'restart':
@@ -275,6 +275,7 @@ function handleIntersect(entries, observer, animate, extraOptions, triggers, mar
   });
 }
 
+// Remove markers
 function removeMarkers(markers){
   if(!markers) return;
   markers.rootMarker.remove();

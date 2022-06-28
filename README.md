@@ -301,7 +301,7 @@ Execute when animation is canceled.
 
 *Example:*
 ```JS
-myAnimation.onready(() => {
+myAnimation.onReady(() => {
   console.log('Ready to play !');
 });
 ```

@@ -279,22 +279,22 @@ myAnimation.setDirection('alternate');
 Events
 ---
 
-#### .onready()
+#### .onReady()
 Execute when animation is ready.
 
-#### .onplay()
+#### .onPlay()
 Execute when animation is playing.
 
-#### .onpause()
+#### .onPause()
 Execute when animation is paused.
 
-#### .onfinish()
+#### .onFinish()
 Execute when animation is finished.
 
-#### .onremove()
+#### .onRemove()
 Execute when animation is removed (everytime the animation is paused/play or changed);
 
-#### .oncancel()
+#### .onCancel()
 Execute when animation is canceled.
 
 &nbsp;

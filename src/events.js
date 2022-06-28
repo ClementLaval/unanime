@@ -1,6 +1,6 @@
 import { getNumberOfAnimations } from "./utils.js";
 
-export function onfinish(action, animationsArray){
+export function onFinish(action, animationsArray){
   let count = 0;
   const numberOfAnimations = getNumberOfAnimations(animationsArray);
   animationsArray.map(animationIndex => {
@@ -13,7 +13,7 @@ export function onfinish(action, animationsArray){
   })
 }
 
-export function onready(action, animationsArray){
+export function onReady(action, animationsArray){
   let count = 0;
   const numberOfAnimations = getNumberOfAnimations(animationsArray);
   animationsArray.map(animationIndex => {
@@ -26,7 +26,7 @@ export function onready(action, animationsArray){
   })
 } 
 
-export function oncancel(action, animationsArray){
+export function onCancel(action, animationsArray){
   let count = 0;
   const numberOfAnimations = getNumberOfAnimations(animationsArray);
   animationsArray.map(animationIndex => {
@@ -40,7 +40,7 @@ export function oncancel(action, animationsArray){
 }
 
 //TO DO 
-export function onremove(action, animationsArray){
+export function onRemove(action, animationsArray){
   let count = 0;
   const numberOfAnimations = getNumberOfAnimations(animationsArray);
   animationsArray.map(animationIndex => {
@@ -53,20 +53,20 @@ export function onremove(action, animationsArray){
   })
 }
 
-export function onplay(action, animate){
-  animate.onplayAction = action;
+export function onPlay(action, animate){
+  animate.onPlayAction = action;
 }
 
-export function onpause(action, animate){
-  animate.onpauseAction = action;
+export function onPause(action, animate){
+  animate.onPauseAction = action;
 }
 
 // TO DO déclenche une action à chaque nouveau tick d'iteration
-export function ontick(action, animationsArray, trigger){
+export function onTick(action, animationsArray, trigger){
 
 }
 
 // TO DO déclenche une action lorsque l'animation atteind un certain pourcentage
-export function onprogress(action, animationsArray, trigger){
+export function onProgress(action, animationsArray, trigger){
 
 }

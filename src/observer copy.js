@@ -2,52 +2,46 @@ import { sleep } from './utils.js'
 
 export async function initObserver(options, animate){
 
-  // Main options
-  const mainOptions = {
+  // Basic options
+  const optionsObserver = {
     root: document.querySelector(options.root) || null,
     rootMargin: options.rootMargin || '0px',
     threshold: getThreshold(options.threshold) || 0
   }
   // Extra options
-  let extraOptions = {
-    target: document.querySelector(options.target) || animate.targets[0],
-    targetMargin: options.targetMargin || '0px',
-    once: options.once || false,
-    markers: options.markers || false,
-    refreshInterval: options.refreshInterval === -1 ? -1 : false  || 5000
-  }
+  let target = document.querySelector(options.target) || animate.targets[0];
+  const targetMargin = options.targetMargin || '0px';
+  const once = options.once || false;
+  const markers = options.markers || false;
+  const refreshInterval = options.refreshInterval === -1 ? -1 : false  || 5000;  
 
   // Triggers
   const triggers = {
-    onEnter: options.onEnter || null,
-    onLeave: options.onLeave || null,
-    onEnterBack: options.onEnterBack || null,
-    onLeaveBack: options.onLeaveBack || null,
-    onRefresh: options.onRefresh || null
+    onEnter: () => options.onEnter()
   }
 
   // Detect device type
   const isMobile = /Mobi/.test(navigator.userAgent);
 
   // Create target overlay
-  extraOptions.target = await setTargetOverlay(extraOptions);
+  target = await setTargetOverlay(target, targetMargin);
 
   // Markers
-  if(extraOptions.markers) displayMarkers(mainOptions, extraOptions.target);
+  if(markers) displayMarkers(optionsObserver, target);
   
   // Refresh Options Display
   animate.options.observer = {
-    target: extraOptions.target,
-    root: mainOptions.root || document,
-    rootMargin: mainOptions.rootMargin,
-    threshold: mainOptions.threshold,
-    once: extraOptions.once,
-    markers: extraOptions.markers
+    target: target,
+    root: optionsObserver.root || document,
+    rootMargin: optionsObserver.rootMargin,
+    threshold: optionsObserver.threshold,
+    once: once,
+    markers: markers
   } 
 
-  let observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, triggers), mainOptions);
+  let observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, triggers), optionsObserver);
 
-  observer.observe(extraOptions.target);
+  observer.observe(target);
   
   // Check resize
   let isRefreshing;
@@ -63,29 +57,28 @@ export async function initObserver(options, animate){
   }
   
   // Check body height
-  if(extraOptions.refreshInterval && extraOptions.refreshInterval > 0){
+  if(refreshInterval && refreshInterval > 0){
     if(isMobile) return; // disable on mobile
     let previousBodyHeight;
     setInterval(() => {
       const bodyHeight = document.body.getBoundingClientRect().height;
       if(bodyHeight !== previousBodyHeight) refresh();
       previousBodyHeight = bodyHeight;
-    }, extraOptions.refreshInterval);
+    }, refreshInterval);
   }
 
   async function refresh(){  
     animate.options.observer.target.remove();
     observer.disconnect();  
-    extraOptions.target = document.querySelector(options.target) || animate.targets[0];
-    extraOptions.target = await setTargetOverlay(extraOptions);
-    if(extraOptions.markers) displayMarkers(mainOptions, extraOptions.target);
-    observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, triggers), mainOptions);
-    observer.observe(extraOptions.target);
-    if(triggers.onRefresh) triggers.onRefresh();
+    target = document.querySelector(options.target) || animate.targets[0];
+    target = await setTargetOverlay(target, targetMargin);
+    if(markers) displayMarkers(optionsObserver, target);
+    observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate), optionsObserver);
+    observer.observe(target);
   }
 }
 
-// Detect threshold input type
+
 function getThreshold(input){
   if(!input) return null;
   
@@ -96,7 +89,6 @@ function getThreshold(input){
   if(Array.isArray(input)) return input;
 }
 
-// Calcul threshold array
 function buildThresholdList(numSteps) {
   let thresholds = [];
 
@@ -109,7 +101,6 @@ function buildThresholdList(numSteps) {
   return thresholds;
 }
 
-// Display markers helper
 async function displayMarkers(options, target){
   await sleep(200);    
   const bodyRect = document.body.getBoundingClientRect();
@@ -146,7 +137,6 @@ async function displayMarkers(options, target){
   target.style.backgroundColor = 'hsl(60, 54%, 80%)';
 }
 
-// Detect margin string and return computed value
 function getComputedMargin(inputMargin, targetRect){
   let array = inputMargin.split(/\s+/);
   array = [...array].filter(el => el !== '');  
@@ -168,7 +158,6 @@ function getComputedMargin(inputMargin, targetRect){
   return obj;
 }
 
-// Transform % input to px value of target
 function getSizeWithPercent(value, targetSize){
   if(!value.includes('%')) return value;
   return (Number(value.replace('%', '')) * targetSize) / 100 + 'px';
@@ -182,33 +171,34 @@ function reverseNumber(value){
   }
 }
 
-// Create a target overlay
-async function setTargetOverlay(extraOptions){   
+async function setTargetOverlay(target, targetMargin){   
   await sleep(200);
   const bodyRect = document.body.getBoundingClientRect();
-  const targetRect = extraOptions.target.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
   const startOffset = targetRect.top - bodyRect.top; 
-  const {marginTop, marginRight, marginBottom, marginLeft} = getComputedMargin(extraOptions.targetMargin, targetRect);
+  const {marginTop, marginRight, marginBottom, marginLeft} = getComputedMargin(targetMargin, targetRect);
   const targetOverlay = document.createElement('div');
   targetOverlay.innerText = 'target';
   targetOverlay.style.cssText = `width: calc(${targetRect.width}px + ${marginRight} + ${marginLeft}); height: calc(${targetRect.height}px + ${marginTop} + ${marginBottom}); position: absolute; top: calc(${startOffset}px - ${marginTop}); left: calc(${targetRect.left}px - ${marginLeft}); z-index: 1000; pointer-events: none; opacity: 0; text-align: right; padding-right: 4px;`;
-  targetOverlay.id = extraOptions.target.id ? `${extraOptions.target.id}-observer-overlay`: `${extraOptions.target.className.split(" ")[0]}-observer-overlay`;
+  targetOverlay.id = target.id ? `${target.id}-observer-overlay`: `${target.className.split(" ")[0]}-observer-overlay`;
   document.body.appendChild(targetOverlay);
   return targetOverlay;
 }
 
-// Handle Intersect
 let prevRatio = 0;
 function handleIntersect(entries, observer, animate, triggers){
   entries.forEach(function(entry) {
     if(entry.intersectionRatio > prevRatio && entry.isIntersecting && entry.intersectionRect.top !== 0){
-      if(triggers.onEnter) triggers.onEnter();
+      triggers.onEnter();
+      console.log('ENTER');
     }else if(entry.intersectionRatio < prevRatio && !entry.isIntersecting && entry.intersectionRect.top === 0){
-      if(triggers.onLeave) triggers.onLeave();
+      console.log('LEAVE');
     }else if (entry.intersectionRatio > prevRatio && entry.isIntersecting && entry.intersectionRect.top === 0){
-      if(triggers.onEnterBack) triggers.onEnterBack();
+      console.log('ENTER TOP')
     }else if(entry.intersectionRatio < prevRatio && !entry.isIntersecting && entry.intersectionRect.top !== 0){
-      if(triggers.onLeaveBack) triggers.onLeaveBack();
+      animate.reverse();
+      animate.play();
+      console.log('LEAVE TOP');
     }
     prevRatio = entry.intersectionRatio;
   });

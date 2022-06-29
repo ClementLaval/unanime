@@ -16,8 +16,9 @@ export async function initObserver(options, animate){
     targetMargin: options.targetMargin || '0px',
     toggleActions: getToggleActions(options.toggleActions) || getToggleActions('play none none none'),
     once: options.once || false,
+    pin: options.pin || false,
     markers: options.markers || false,
-    refreshInterval: options.refreshInterval === -1 ? -1 : false  || 1000,
+    refreshInterval: options.refreshInterval === -1 ? -1 : false  || 1000
   }
 
   // Triggers
@@ -47,6 +48,7 @@ export async function initObserver(options, animate){
     threshold: mainOptions.threshold,
     toggleActions: extraOptions.toggleActions,
     once: extraOptions.once,
+    pin: extraOptions.pin,
     markers: extraOptions.markers
   } 
 
@@ -268,20 +270,24 @@ function handleIntersect(entries, animate, extraOptions, triggers, markers){
     if(firstTick) return firstTick = false; // bypass first tick (load tick)
 
     if(isEntering && isBelow){
-      if(extraOptions.toggleActions.onEnter) animate[extraOptions.toggleActions.onEnter]()
+      if(extraOptions.pin){animate.scrub(entry.intersectionRatio)}
+      else{(extraOptions.toggleActions.onEnter) && animate[extraOptions.toggleActions.onEnter]()}
       if(triggers.onEnter) triggers.onEnter();
       if(extraOptions.once) animate.onFinish(() => removeMarkers(markers), observer.disconnect());
     }
     else if(isLeaving && !isBelow){
-      if(extraOptions.toggleActions.onLeave) animate[extraOptions.toggleActions.onLeave]()
+      if(extraOptions.pin){animate.scrub(1 - entry.intersectionRatio)}
+      else{(extraOptions.toggleActions.onLeave) && animate[extraOptions.toggleActions.onLeave]()}
       if(triggers.onLeave) triggers.onLeave();
     }
     else if(isEntering && !isBelow){
-      if(extraOptions.toggleActions.onEnterBack) animate[extraOptions.toggleActions.onEnterBack]()
+      if(extraOptions.pin){animate.scrub(1 - entry.intersectionRatio)}
+      else{(extraOptions.toggleActions.onEnterBack) && animate[extraOptions.toggleActions.onEnterBack]()}
       if(triggers.onEnterBack) triggers.onEnterBack();
     }
     else if(isLeaving && isBelow){
-      if(extraOptions.toggleActions.onLeaveBack) animate[extraOptions.toggleActions.onLeaveBack]()
+      if(extraOptions.pin){animate.scrub(entry.intersectionRatio)}
+      else{(extraOptions.toggleActions.onLeaveBack) && animate[extraOptions.toggleActions.onLeaveBack]()}
       if(triggers.onLeaveBack) triggers.onLeaveBack();
     }
     prevRatio = entry.intersectionRatio;

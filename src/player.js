@@ -70,3 +70,6 @@ export function seek(value = 0, animationsArray){
   })
 }
 
+export function scrub(value, animationsArray){
+  console.log(value);
+}

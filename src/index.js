@@ -1,4 +1,4 @@
-import { play, pause, restart, cancel, reset, finish, reverse, seek } from './player.js';
+import { play, pause, restart, cancel, reset, finish, reverse, seek, scrub } from './player.js';
 import { onFinish, onReady, onCancel, onRemove, onPlay, onPause } from './events.js';
 import { getTargets } from './targets.js';
 import { getOptionsDisplay } from './options.js';
@@ -26,7 +26,8 @@ function animate(targets, keyframes, options){
     reset: () => reset(animationsArray),
     finish: () => finish(animationsArray),
     reverse: () => reverse(animationsArray),
-    seek: (value) => seek(value, animationsArray), //TO DO
+    seek: (value) => seek(value, animationsArray),
+    scrub: (value) => scrub(value, animationsArray),
     // Events
     onReady: (action) => onReady(action, animationsArray),
     onFinish: (action) => onFinish(action, animationsArray),

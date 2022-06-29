@@ -50,7 +50,7 @@ export async function initObserver(options, animate){
     markers: extraOptions.markers
   } 
 
-  let observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, extraOptions, triggers, markers), mainOptions);
+  let observer = new IntersectionObserver((entries) => handleIntersect(entries, animate, extraOptions, triggers, markers), mainOptions);
 
   observer.observe(extraOptions.target);
   
@@ -86,7 +86,7 @@ export async function initObserver(options, animate){
     extraOptions.target = document.querySelector(options.target) || animate.targets[0];
     extraOptions.target = await setTargetOverlay(extraOptions);
     if(extraOptions.markers) markers = await displayMarkers(mainOptions, extraOptions.target);
-    observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, extraOptions, triggers, markers), mainOptions);
+    observer = new IntersectionObserver((entries) => handleIntersect(entries, animate, extraOptions, triggers, markers), mainOptions);
     observer.observe(extraOptions.target);
     if(triggers.onRefresh) triggers.onRefresh();
   }
@@ -258,19 +258,29 @@ function getAction(action){
 
 // Handle Intersect
 let prevRatio = 0;
-function handleIntersect(entries, observer, animate, extraOptions, triggers, markers){
-  entries.forEach(function(entry) {
-    if(entry.intersectionRatio > prevRatio && entry.isIntersecting && entry.intersectionRect.top !== 0){
+let firstTick = true;
+function handleIntersect(entries, animate, extraOptions, triggers, markers){
+  entries.forEach((entry) => {
+    let isEntering, isLeaving, isBelow;
+    entry.intersectionRatio > prevRatio ? (isEntering = true, isLeaving = false) : (isEntering = false, isLeaving = true);
+    entry.boundingClientRect.top > entry.rootBounds.top ? isBelow = true : isBelow = false;
+
+    if(firstTick) return firstTick = false; // bypass first tick (load tick)
+
+    if(isEntering && isBelow){
       if(extraOptions.toggleActions.onEnter) animate[extraOptions.toggleActions.onEnter]()
       if(triggers.onEnter) triggers.onEnter();
       if(extraOptions.once) animate.onFinish(() => removeMarkers(markers), observer.disconnect());
-    }else if(entry.intersectionRatio < prevRatio && !entry.isIntersecting && entry.intersectionRect.top === 0){
+    }
+    else if(isLeaving && !isBelow){
       if(extraOptions.toggleActions.onLeave) animate[extraOptions.toggleActions.onLeave]()
       if(triggers.onLeave) triggers.onLeave();
-    }else if (entry.intersectionRatio > prevRatio && entry.isIntersecting && entry.intersectionRect.top === 0){
+    }
+    else if(isEntering && !isBelow){
       if(extraOptions.toggleActions.onEnterBack) animate[extraOptions.toggleActions.onEnterBack]()
       if(triggers.onEnterBack) triggers.onEnterBack();
-    }else if(entry.intersectionRatio < prevRatio && !entry.isIntersecting && entry.intersectionRect.top !== 0){
+    }
+    else if(isLeaving && isBelow){
       if(extraOptions.toggleActions.onLeaveBack) animate[extraOptions.toggleActions.onLeaveBack]()
       if(triggers.onLeaveBack) triggers.onLeaveBack();
     }

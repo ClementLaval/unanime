@@ -20,7 +20,6 @@ export async function initObserver(options, animate){
     markers: options.markers || false,
     refreshInterval: options.refreshInterval === -1 ? -1 : false  || 1000
   }
-  console.log(extraOptions.target);
   
   // Triggers
   const triggers = {
@@ -34,12 +33,23 @@ export async function initObserver(options, animate){
   // Detect device type
   const isMobile = /Mobi/.test(navigator.userAgent);
 
-  // Create target overlay
-  extraOptions.target = await setTargetOverlay(extraOptions);
+  // Create target overlay  
+  let targetsList = []; 
+  await Promise.all(extraOptions.target.map(async(target) => {
+    targetsList.push(await setTargetOverlay(target, extraOptions.targetMargin));
+  })) 
+  extraOptions.target = targetsList;
 
   // Markers
-  let markers;
-  if(extraOptions.markers) markers =  await displayMarkers(mainOptions, extraOptions.target);   
+  // let markers;
+  // markers =  await displayMarkers(mainOptions, extraOptions.target[0]);  
+  let markersList; 
+  if(extraOptions.markers){
+    markersList = [];
+    await Promise.all(extraOptions.target.map(async(target) => {
+      markersList.push(await displayMarkers(mainOptions, target));
+    })) 
+  } 
 
   // Refresh Options Display
   animate.options.observer = {
@@ -53,9 +63,15 @@ export async function initObserver(options, animate){
     markers: extraOptions.markers
   } 
 
-  let observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer,  animate, extraOptions, triggers, markers), mainOptions);
-
-  observer.observe(extraOptions.target);
+  // Create Observer List
+  let observersList = [];
+  extraOptions.target.map((target, index) => {
+    observersList.push(new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, extraOptions, triggers, markersList), mainOptions));
+  })
+ 
+  observersList.forEach((observer, index) => {
+    observer.observe(extraOptions.target[index])
+  })
   
   // Check resize
   let isRefreshing;
@@ -81,16 +97,37 @@ export async function initObserver(options, animate){
     }, extraOptions.refreshInterval);
   }
 
+  // Refresh
   refresh = async (delay) => {  
     if(delay) await sleep(delay);
-    animate.options.observer.target.remove();
-    observer.disconnect();  
-    removeMarkers(markers);
-    extraOptions.target = document.querySelector(options.target) || getTarget(animate.targets);
-    extraOptions.target = await setTargetOverlay(extraOptions);
-    if(extraOptions.markers) markers = await displayMarkers(mainOptions, extraOptions.target);
-    observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, extraOptions, triggers, markers), mainOptions);
-    observer.observe(extraOptions.target);
+    animate.options.observer.target.map(target => target.remove());
+
+    observersList.map(observer => observer.disconnect());  
+
+    removeMarkers(markersList);
+
+    extraOptions.target = getTarget(document.querySelectorAll(options.target)) || getTarget(animate.targets);
+
+    targetsList = [];
+    await Promise.all(extraOptions.target.map(async(target) => {
+      targetsList.push(await setTargetOverlay(target, extraOptions.targetMargin));
+    })) 
+    extraOptions.target = targetsList;
+
+    markersList = [];
+    await Promise.all(extraOptions.target.map(async(target) => {
+      markersList.push(await displayMarkers(mainOptions, target));
+    })) 
+
+    observersList = [];
+    extraOptions.target.map((target, index) => {
+      observersList.push(new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, extraOptions, triggers, markersList), mainOptions));
+    })
+   
+    observersList.forEach((observer, index) => {
+      observer.observe(extraOptions.target[index])
+    })
+
     if(triggers.onRefresh) triggers.onRefresh();
   }
 }
@@ -226,16 +263,16 @@ function reverseNumber(value){
 }
 
 // Create a target overlay
-async function setTargetOverlay(extraOptions){   
+async function setTargetOverlay(target, targetMargin){   
   await sleep(200);
   const bodyRect = document.body.getBoundingClientRect();
-  const targetRect = extraOptions.target.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
   const startOffset = targetRect.top - bodyRect.top; 
-  const {marginTop, marginRight, marginBottom, marginLeft} = getComputedMargin(extraOptions.targetMargin, targetRect);
+  const {marginTop, marginRight, marginBottom, marginLeft} = getComputedMargin(targetMargin, targetRect);
   const targetOverlay = document.createElement('div');
   targetOverlay.innerText = 'target';
   targetOverlay.style.cssText = `width: calc(${targetRect.width}px + ${marginRight} + ${marginLeft}); height: calc(${targetRect.height}px + ${marginTop} + ${marginBottom}); position: absolute; top: calc(${startOffset}px - ${marginTop}); left: calc(${targetRect.left}px - ${marginLeft}); z-index: 1000; pointer-events: none; opacity: 0; text-align: right; padding-right: 4px;`;
-  targetOverlay.id = extraOptions.target.id ? `${extraOptions.target.id}-observer-overlay`: `${extraOptions.target.className.split(" ")[0]}-observer-overlay`;
+  targetOverlay.id = target.id ? `${target.id}-observer-overlay`: `${target.className.split(" ")[0]}-observer-overlay`;
   document.body.appendChild(targetOverlay);
   return targetOverlay;
 }
@@ -324,11 +361,13 @@ function handleIntersect(entries, observer, animate, extraOptions, triggers, mar
 }
 
 // Remove markers
-function removeMarkers(markers){
-  if(!markers) return;
-  markers.rootMarker.remove();
-  markers.target.remove();
-  markers.startMarker.remove();
-  markers.endMarker.remove();
-  markers.thresholdsMarkers.forEach(threshold => threshold.remove());
+function removeMarkers(markersList){
+  if(!markersList) return;
+  markersList.map(markers => {
+    markers.rootMarker.remove();
+    markers.target.remove();
+    markers.startMarker.remove();
+    markers.endMarker.remove();
+    markers.thresholdsMarkers.forEach(threshold => threshold.remove());
+  });
 }

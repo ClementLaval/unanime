@@ -98,8 +98,9 @@ export async function initObserver(options, animate){
 // Detect if array, return parentNode
 function getTarget(target){
   if(!target || target.length === 0) return null;
+  target = Array.prototype.slice.call(target);
 
-  if(Array.isArray(target)){
+  if(Array.isArray(target) && target.some(el => Array.isArray(el))){
     let array = [];
     target.map(el => {
       if(Array.isArray(el) && el.length > 1){
@@ -111,8 +112,10 @@ function getTarget(target){
       }
     })
     return array;
+  }else if(Array.isArray(target)){
+    return new Array(target[0].parentNode);
   }else{
-    return target;
+    return new Array(target);
   }
 
 }

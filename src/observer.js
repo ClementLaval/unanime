@@ -113,11 +113,14 @@ function getTarget(target){
     })
     return array;
   }else if(Array.isArray(target)){
-    return new Array(target[0].parentNode);
+    if(target.length > 1){
+      return new Array(target[0].parentNode);
+    }else{
+      return new Array(target[0]);
+    }
   }else{
     return new Array(target);
   }
-
 }
 
 // Detect threshold input type

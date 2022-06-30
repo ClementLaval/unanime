@@ -3,7 +3,8 @@ import { sleep } from './utils.js'
 export let refresh;
 
 export async function initObserver(options, animate){
-
+  if(!options.pinOptions) options.pinOptions = {smoothness: null, default: null};
+  
   // Main options
   const mainOptions = {
     root: document.querySelector(options.root) || null,
@@ -16,9 +17,13 @@ export async function initObserver(options, animate){
     targetMargin: options.targetMargin || '0px',
     toggleActions: getToggleActions(options.toggleActions) || getToggleActions('play none none none'),
     once: options.once || false,
-    pin: options.pin || false,
     markers: options.markers || false,
-    refreshInterval: options.refreshInterval === -1 ? -1 : false  || 1000
+    refreshInterval: options.refreshInterval || -1,
+    pin: options.pin || false,
+    pinOptions: {
+      smoothness: options.pinOptions.smoothness || 0.05,
+      delay: options.pinOptions.delay || 0
+    } 
   }
   
   // Triggers
@@ -41,10 +46,8 @@ export async function initObserver(options, animate){
   extraOptions.target = targetsList;
 
   // Markers
-  // let markers;
-  // markers =  await displayMarkers(mainOptions, extraOptions.target[0]);  
   let markersList; 
-  if(extraOptions.markers){
+  if(extraOptions.markers === true){
     markersList = [];
     await Promise.all(extraOptions.target.map(async(target) => {
       markersList.push(await displayMarkers(mainOptions, target));
@@ -59,13 +62,14 @@ export async function initObserver(options, animate){
     threshold: mainOptions.threshold,
     toggleActions: extraOptions.toggleActions,
     once: extraOptions.once,
+    markers: extraOptions.markers,
     pin: extraOptions.pin,
-    markers: extraOptions.markers
+    pinOptions: extraOptions.pinOptions
   } 
 
   // Create Observer List
   let observersList = [];
-  extraOptions.target.map((target, index) => {
+  extraOptions.target.map(target => {
     observersList.push(new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, extraOptions, triggers, markersList), mainOptions));
   })
  
@@ -114,10 +118,12 @@ export async function initObserver(options, animate){
     })) 
     extraOptions.target = targetsList;
 
-    markersList = [];
-    await Promise.all(extraOptions.target.map(async(target) => {
-      markersList.push(await displayMarkers(mainOptions, target));
-    })) 
+    if(extraOptions.markers === true){
+      markersList = [];
+      await Promise.all(extraOptions.target.map(async(target) => {
+        markersList.push(await displayMarkers(mainOptions, target));
+      })) 
+    }
 
     observersList = [];
     extraOptions.target.map((target, index) => {
@@ -336,7 +342,7 @@ function handleIntersect(entries, observer, animate, extraOptions, triggers, mar
     if(firstTick) return firstTick = false; // bypass first tick (load tick)
 
     if(isEntering && isBelow){
-      if(extraOptions.pin){animate.scrub(entry.intersectionRatio)}
+      if(extraOptions.pin){animate.scrub(entry.intersectionRatio, extraOptions.pinOptions)}
       else{(extraOptions.toggleActions.onEnter) && animate[extraOptions.toggleActions.onEnter]()}
       if(triggers.onEnter) triggers.onEnter();
       if(extraOptions.once) animate.onFinish(() => removeMarkers(markers), observer.disconnect());
@@ -352,7 +358,7 @@ function handleIntersect(entries, observer, animate, extraOptions, triggers, mar
       if(triggers.onEnterBack) triggers.onEnterBack();
     }
     else if(isLeaving && isBelow){
-      if(extraOptions.pin){animate.scrub(entry.intersectionRatio)}
+      if(extraOptions.pin){animate.scrub(entry.intersectionRatio, extraOptions.pinOptions)}
       else{(extraOptions.toggleActions.onLeaveBack) && animate[extraOptions.toggleActions.onLeaveBack]()}
       if(triggers.onLeaveBack) triggers.onLeaveBack();
     }

@@ -73,27 +73,24 @@ export function seek(value = 0, animationsArray){
 let position = 0;
 let target = 0;
 let isPlaying = false;
-let toggleTarget = true;
-export function scrub(value, animationsArray){
-  if(toggleTarget === true){
-    toggleTarget = false;
-    
-      target = value;
+export function scrub(value, animationsArray, pinOptions){
+  const {smoothness, delay} = pinOptions;
   
-    setTimeout(() => {
-      toggleTarget = true;          
-    }, 100);
+  if(delay){
+    setTimeout(() => { target = value }, delay);
+  }else{
+    target = value;
   }
 
-  if(isPlaying) return;
   function loop(){
     if(isPlaying === true){
-      position += (target - position) * 0.03;
+      position += (target - position) * smoothness;
       seek(position, animationsArray);
       requestAnimationFrame(loop); 
     }
   }
-
+  
+  if(isPlaying) return;
   isPlaying = true;
   requestAnimationFrame(loop); 
 

@@ -70,6 +70,34 @@ export function seek(value = 0, animationsArray){
   })
 }
 
+let position = 0;
+let target = 0;
+let isPlaying = false;
+let toggleTarget = true;
 export function scrub(value, animationsArray){
-  console.log(value);
+  if(toggleTarget === true){
+    toggleTarget = false;
+    
+      target = value;
+  
+    setTimeout(() => {
+      toggleTarget = true;          
+    }, 100);
+  }
+
+  if(isPlaying) return;
+  function loop(){
+    if(isPlaying === true){
+      position += (target - position) * 0.03;
+      seek(position, animationsArray);
+      requestAnimationFrame(loop); 
+    }
+  }
+
+  isPlaying = true;
+  requestAnimationFrame(loop); 
+
+  setTimeout(() => {
+    isPlaying = false;
+  }, 2000);
 }

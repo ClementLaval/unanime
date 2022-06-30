@@ -12,7 +12,7 @@ export async function initObserver(options, animate){
   }
   // Extra options
   let extraOptions = {
-    target: document.querySelector(options.target) || animate.targets[0],
+    target: getTarget(document.querySelectorAll(options.target)) || getTarget(animate.targets),
     targetMargin: options.targetMargin || '0px',
     toggleActions: getToggleActions(options.toggleActions) || getToggleActions('play none none none'),
     once: options.once || false,
@@ -20,7 +20,8 @@ export async function initObserver(options, animate){
     markers: options.markers || false,
     refreshInterval: options.refreshInterval === -1 ? -1 : false  || 1000
   }
-
+  console.log(extraOptions.target);
+  
   // Triggers
   const triggers = {
     onEnter: options.onEnter || null,
@@ -52,7 +53,7 @@ export async function initObserver(options, animate){
     markers: extraOptions.markers
   } 
 
-  let observer = new IntersectionObserver((entries) => handleIntersect(entries, animate, extraOptions, triggers, markers), mainOptions);
+  let observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer,  animate, extraOptions, triggers, markers), mainOptions);
 
   observer.observe(extraOptions.target);
   
@@ -85,13 +86,35 @@ export async function initObserver(options, animate){
     animate.options.observer.target.remove();
     observer.disconnect();  
     removeMarkers(markers);
-    extraOptions.target = document.querySelector(options.target) || animate.targets[0];
+    extraOptions.target = document.querySelector(options.target) || getTarget(animate.targets);
     extraOptions.target = await setTargetOverlay(extraOptions);
     if(extraOptions.markers) markers = await displayMarkers(mainOptions, extraOptions.target);
-    observer = new IntersectionObserver((entries) => handleIntersect(entries, animate, extraOptions, triggers, markers), mainOptions);
+    observer = new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, extraOptions, triggers, markers), mainOptions);
     observer.observe(extraOptions.target);
     if(triggers.onRefresh) triggers.onRefresh();
   }
+}
+
+// Detect if array, return parentNode
+function getTarget(target){
+  if(!target || target.length === 0) return null;
+
+  if(Array.isArray(target)){
+    let array = [];
+    target.map(el => {
+      if(Array.isArray(el) && el.length > 1){
+        array.push(el[0].parentNode);
+      }else if(Array.isArray(el)){
+        array.push(el[0]);
+      }else{
+        array.push(el);
+      }
+    })
+    return array;
+  }else{
+    return target;
+  }
+
 }
 
 // Detect threshold input type
@@ -261,7 +284,7 @@ function getAction(action){
 // Handle Intersect
 let prevRatio = 0;
 let firstTick = true;
-function handleIntersect(entries, animate, extraOptions, triggers, markers){
+function handleIntersect(entries, observer, animate, extraOptions, triggers, markers){
   entries.forEach((entry) => {
     let isEntering, isLeaving, isBelow;
     entry.intersectionRatio > prevRatio ? (isEntering = true, isLeaving = false) : (isEntering = false, isLeaving = true);
@@ -276,12 +299,12 @@ function handleIntersect(entries, animate, extraOptions, triggers, markers){
       if(extraOptions.once) animate.onFinish(() => removeMarkers(markers), observer.disconnect());
     }
     else if(isLeaving && !isBelow){
-      if(extraOptions.pin){animate.scrub(1 - entry.intersectionRatio)}
+      if(extraOptions.pin){return; animate.scrub(1 - entry.intersectionRatio)}
       else{(extraOptions.toggleActions.onLeave) && animate[extraOptions.toggleActions.onLeave]()}
       if(triggers.onLeave) triggers.onLeave();
     }
     else if(isEntering && !isBelow){
-      if(extraOptions.pin){animate.scrub(1 - entry.intersectionRatio)}
+      if(extraOptions.pin){return; animate.scrub(1 - entry.intersectionRatio)}
       else{(extraOptions.toggleActions.onEnterBack) && animate[extraOptions.toggleActions.onEnterBack]()}
       if(triggers.onEnterBack) triggers.onEnterBack();
     }

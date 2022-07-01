@@ -346,7 +346,7 @@ function handleIntersect(entries, observer, animate, extraOptions, triggers, mar
       if(extraOptions.pin){animate.scrub(entry.intersectionRatio, extraOptions.pinOptions)}
       else{(extraOptions.toggleActions.onEnter) && animate[extraOptions.toggleActions.onEnter]()}
       if(extraOptions.once && !extraOptions.pin) animate.onFinish(() => removeMarkers(markers), observer.disconnect());
-      if(extraOptions.once && extraOptions.pin){} entry.intersectionRatio > 0.95 && function(){removeMarkers(markers); observer.disconnect()}();
+      if(extraOptions.once && extraOptions.pin) entry.intersectionRatio > 0.95 && function(){removeMarkers(markers); observer.disconnect()}();
     }
     else if(isLeaving && !isBelow){
       if(triggers.onLeave) triggers.onLeave();

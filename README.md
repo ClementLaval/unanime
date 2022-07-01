@@ -423,3 +423,60 @@ Use ***NUMBER*** to change the absolute position of your animation.
 ```JS
 {animate: myAnimation2, start: 6500} // start at 6500ms after the timeline started
 ```
+
+&nbsp;
+## Scroll Trigger (Observer)
+
+Observer is a module to trigger your animation by scrolling (build with Intersection Observer API).
+Please be sure to undestand how works the API to use it (root, target, threshold ...) [Intersection Observer API Doc](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)
+
+```JS
+// Options
+{
+  observer: {
+    root: null,
+    // set the root element, by default null automatically select the viewport (most of time, don't change this property)
+    rootMargin: '0px 0px 20% 0px',
+    // change root size by adding + / - margins, define in string as classic margins (px and % only)
+    target: '#sectionId',
+    // by default target automatically select the animation's target (auto detect array create only one observer on direct parent), change it to trigger the animation from another area. Under the hood a layout is created at the end of the body with class=${targetId}-intersection-observer
+    targetMargin: '20% 0px',
+    // change target size by adding + / - margins, use a string (px, %, vw ... accepted)
+    threshold: 0.3, // default: 0 / if pin is true default: 100
+    // set only one threshold if between 0 - 1 (threshold: 0.5) 
+    // or an array of threshold (threshold: [0.2, 0.5, 0.8])
+    // or automatically calculate an array if you define the number you want (threshold: 36) 
+    refreshInterval: 1000,
+    // set an interval to refresh target's placement when page's height grow up or during a window resize, default: -1 (disabled)
+    markers: true,
+    // set markers to true to see helpers on your screen
+    once: false,
+    // set to true if you want disable the observer once the animation is finished
+    toggleAction: 'play pause reverse resume reset',
+    // set quick actions depending of scroll action (enter / leave / enterback / leaveback)
+    // actions list: none, play, pause, resume, reverse, complete, restart, reset
+    pin: false,
+    // set to true to link your animation with your scroll
+    pinOptions: {
+      smoothness: 0.05, // default 0.05, go under to give more smoothness
+      delay: 80 // default 0, to add delay between scroll and animation
+    },
+    onEnter: () => {
+      console.log('ENTER');
+    },
+    // triggered action when root scroll down and enter in target area
+    onLeave: () => {
+      console.log('LEAVE');
+    },
+    // triggered action when root scroll down and leave the target area
+    onEnterBack: () => {
+      console.log('ENTER BACK');
+    },
+    // triggered action when root scroll up and enter back in the target area
+    onLeaveBack: () => {
+      console.log('LEAVE BACK');
+    },
+    // triggered action when root scroll up and leave back from the target area
+  }
+}
+```

@@ -208,7 +208,10 @@ Go to the last frame animation.
 Stop and remove animation from browser.
 
 #### .seek(number)
-Go to a specific moment of animation (number from 0 to 1).
+Go immediatly to a specific moment of animation (number from 0 to 1).
+
+#### .scrub(number, options)
+Go smoothely to a specific moment, new direction is calculed from the previous position, pass pinOptions as second argument ({smoothness: 0.05, delay: 0} // default)
 
 &nbsp;
 

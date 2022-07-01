@@ -3,14 +3,14 @@ import { sleep } from './utils.js'
 export let refresh;
 
 export async function initObserver(options, animate){
-  if(!options.pinOptions) options.pinOptions = {smoothness: null, default: null};
   
   // Main options
   const mainOptions = {
     root: document.querySelector(options.root) || null,
     rootMargin: options.rootMargin || '0px',
-    threshold: getThreshold(options.threshold) || 0
+    threshold: options?.pin === true && !options.threshold ? getThreshold(100) :  getThreshold(options.threshold) || 0
   }
+
   // Extra options
   let extraOptions = {
     target: getTarget(document.querySelectorAll(options.target)) || getTarget(animate.targets),
@@ -21,8 +21,8 @@ export async function initObserver(options, animate){
     refreshInterval: options.refreshInterval || -1,
     pin: options.pin || false,
     pinOptions: {
-      smoothness: options.pinOptions.smoothness || 0.05,
-      delay: options.pinOptions.delay || 0
+      smoothness: options.pinOptions?.smoothness || 0.05,
+      delay: options.pinOptions?.delay || 0
     } 
   }
   
@@ -342,25 +342,26 @@ function handleIntersect(entries, observer, animate, extraOptions, triggers, mar
     if(firstTick) return firstTick = false; // bypass first tick (load tick)
 
     if(isEntering && isBelow){
+      if(triggers.onEnter) triggers.onEnter();
       if(extraOptions.pin){animate.scrub(entry.intersectionRatio, extraOptions.pinOptions)}
       else{(extraOptions.toggleActions.onEnter) && animate[extraOptions.toggleActions.onEnter]()}
-      if(triggers.onEnter) triggers.onEnter();
-      if(extraOptions.once) animate.onFinish(() => removeMarkers(markers), observer.disconnect());
+      if(extraOptions.once && !extraOptions.pin) animate.onFinish(() => removeMarkers(markers), observer.disconnect());
+      if(extraOptions.once && extraOptions.pin){} entry.intersectionRatio > 0.95 && function(){removeMarkers(markers); observer.disconnect()}();
     }
     else if(isLeaving && !isBelow){
+      if(triggers.onLeave) triggers.onLeave();
       if(extraOptions.pin){return; animate.scrub(1 - entry.intersectionRatio)}
       else{(extraOptions.toggleActions.onLeave) && animate[extraOptions.toggleActions.onLeave]()}
-      if(triggers.onLeave) triggers.onLeave();
     }
     else if(isEntering && !isBelow){
+      if(triggers.onEnterBack) triggers.onEnterBack();
       if(extraOptions.pin){return; animate.scrub(1 - entry.intersectionRatio)}
       else{(extraOptions.toggleActions.onEnterBack) && animate[extraOptions.toggleActions.onEnterBack]()}
-      if(triggers.onEnterBack) triggers.onEnterBack();
     }
     else if(isLeaving && isBelow){
+      if(triggers.onLeaveBack) triggers.onLeaveBack();
       if(extraOptions.pin){animate.scrub(entry.intersectionRatio, extraOptions.pinOptions)}
       else{(extraOptions.toggleActions.onLeaveBack) && animate[extraOptions.toggleActions.onLeaveBack]()}
-      if(triggers.onLeaveBack) triggers.onLeaveBack();
     }
     prevRatio = entry.intersectionRatio;
   });

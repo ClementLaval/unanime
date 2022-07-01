@@ -74,15 +74,19 @@ let position = 0;
 let target = 0;
 let isPlaying = false;
 export function scrub(value, animationsArray, pinOptions){
-  const {smoothness = 0.05, delay = 0} = pinOptions;
-  
+  const {smoothness, delay} = pinOptions || {smoothness: 0.05, delay: 0};
+
   if(delay){
     setTimeout(() => { target = value }, delay);
   }else{
     target = value;
   }
 
+  const limit = value > position ? value - 0.001 : value + 0.001;  
+  
   function loop(){
+    const limitCondition = value > position ? position > limit : position < limit;
+    if(limitCondition) return isPlaying = false;
     if(isPlaying === true){
       position += (target - position) * smoothness;
       seek(position, animationsArray);
@@ -93,8 +97,4 @@ export function scrub(value, animationsArray, pinOptions){
   if(isPlaying) return;
   isPlaying = true;
   requestAnimationFrame(loop); 
-
-  setTimeout(() => {
-    isPlaying = false;
-  }, 2000);
 }

@@ -27,7 +27,7 @@ function animate(targets, keyframes, options){
     finish: () => finish(animationsArray),
     reverse: () => reverse(animationsArray),
     seek: (value) => seek(value, animationsArray),
-    scrub: (value, pinOptions) => scrub(value, animationsArray, pinOptions),
+    scrub: (value, pinOptions) => {if(!animate.useScrub)scrub(pinOptions, animate); animate.useScrub(value)}, 
     // Events
     onReady: (action) => onReady(action, animationsArray),
     onFinish: (action) => onFinish(action, animationsArray),

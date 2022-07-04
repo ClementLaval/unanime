@@ -70,31 +70,36 @@ export function seek(value = 0, animationsArray){
   })
 }
 
-let position = 0;
-let target = 0;
-let isPlaying = false;
-export function scrub(value, animationsArray, pinOptions){
-  const {smoothness, delay} = pinOptions || {smoothness: 0.05, delay: 0};
+export function scrub(pinOptions, animate){
+  const {smoothness, delay} = pinOptions || {smoothness: 0.05, delay: 0};   
 
-  if(delay){
-    setTimeout(() => { target = value }, delay);
-  }else{
-    target = value;
+  animate.states = {
+    position: 0,
+    target: 0,
+    isPlaying: false
   }
-
-  const limit = value > position ? value - 0.001 : value + 0.001;  
   
-  function loop(){
-    const limitCondition = value > position ? position > limit : position < limit;
-    if(limitCondition) return isPlaying = false;
-    if(isPlaying === true){
-      position += (target - position) * smoothness;
-      seek(position, animationsArray);
-      requestAnimationFrame(loop); 
+  animate.useScrub = (value) => {
+    
+    if(delay){
+      setTimeout(() => { animate.states.target = value }, delay);
+    }else{
+      animate.states.target = value;
     }
-  }
-  
-  if(isPlaying) return;
-  isPlaying = true;
-  requestAnimationFrame(loop); 
+    
+    const limit = value > animate.states.position ? value - 0.001 : value + 0.001;  
+    
+    function loop(){
+      const limitCondition = value > animate.states.position ? animate.states.position > limit : animate.states.position < limit;
+      if(limitCondition) return animate.states.isPlaying = false && window.cancelAnimationFrame();
+      if(animate.states.isPlaying === true){
+        animate.states.position += (animate.states.target - animate.states.position) * smoothness;
+        animate.seek(animate.states.position);
+        requestAnimationFrame(loop);  
+      }
+    }
+    if(animate.states.isPlaying) return;
+    requestAnimationFrame(loop); 
+    animate.states.isPlaying = true;
+  }  
 }

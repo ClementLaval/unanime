@@ -455,7 +455,7 @@ Please be sure to undestand how works the API to use it (root, target, threshold
     // set markers to true to see helpers on your screen
     once: false,
     // set to true if you want disable the observer once the animation is finished
-    toggleAction: 'play pause reverse resume reset',
+    toggleAction: 'play pause reverse reset',
     // set quick actions depending of scroll action (enter / leave / enterback / leaveback)
     // actions list: none, play, pause, resume, reverse, complete, restart, reset
     pin: false,

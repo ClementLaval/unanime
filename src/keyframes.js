@@ -110,12 +110,21 @@ function fillKeyframes(properties, contents, stepsValues){
     dollarPosition.push(localPosition);
     contentsWithoutDollar.push(content);
   })
-  console.log(contentsWithoutDollar);
-
+  
   for(let i=0; i < 100; i++){
     const keyframe = {};
     properties.forEach((property, index) => {
-      keyframe[property] = contents[index].replace('/$/', stepsValues[index][0][i]);    
+      let tempKeyframe;
+      let offset = 0;
+      dollarPosition[index].map((position, idx) => {
+        if(!tempKeyframe){
+          tempKeyframe = contentsWithoutDollar[index].substring(0, position) + stepsValues[index][idx][i] +  contentsWithoutDollar[index].substring(position);
+        }else{
+          tempKeyframe = tempKeyframe.substring(0, position + offset) + stepsValues[index][idx][i] +  tempKeyframe.substring(position + offset);
+        }
+        offset += stepsValues[index][idx][i].toString().length;
+      })
+      keyframe[property] = tempKeyframe;
     })      
         
     keyframesArray.push(keyframe);    

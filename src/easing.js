@@ -12,6 +12,9 @@ export function easing(easing, index, targetsIndexLength){
       return selectEasing(current);
     }
     return selectEasing(current);    
+  }else if (typeof easing === 'object'){
+    // Custom easing is in keyframes
+    return 'linear';
   }
 
   function selectEasing(easing){  

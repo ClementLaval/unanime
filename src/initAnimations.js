@@ -20,7 +20,7 @@ export function initAnimations(targets, keyframes, options){
 
       const targetIndexLength = targetsIndex.length;
      
-      const funcKeyframes = setKeyframes(keyframes);
+      const funcKeyframes = setKeyframes(keyframes, options);
       
       const funcOptions = setOptions(options, index, targetIndexLength); 
 

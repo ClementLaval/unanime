@@ -1,7 +1,7 @@
 export function setKeyframes(keyframes, options){
   
   if(options.easing && typeof options.easing === 'object'){
-    getKeyframesProperties(keyframes)
+    return getKeyframesProperties(keyframes)
   } else{
     return keyframes;
   }
@@ -38,6 +38,7 @@ function getKeyframesProperties(keyframes){
 
   const newKeyframes = fillKeyframes(firstFrameProperties, firstFrameContent, stepsValues);
   
+  return newKeyframes;
 }
 
 // Extract numbers from string and return array of number
@@ -125,11 +126,9 @@ function fillKeyframes(properties, contents, stepsValues){
         offset += stepsValues[index][idx][i].toString().length;
       })
       keyframe[property] = tempKeyframe;
-    })      
-        
+    })              
     keyframesArray.push(keyframe);    
   }
 
-  console.log(keyframesArray);
-  console.log(properties, contents, stepsValues)
+  return keyframesArray; 
 }

@@ -126,11 +126,15 @@ export function spring(stiffness, mass, damping){
 
     i++;
 
-    positions.push(x);
-  }
+    positions.push(x);  
+  } 
+  
+  // cut the end of animation
+  const half = Math.ceil(positions.length / 2);   
+  positions = [...positions].slice(0, half);
 
-  return positions;
-}; 
+  return positions;   
+};  
 
 export function lerp(a, b, p){
   return a + p * (b - a);

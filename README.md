@@ -177,6 +177,7 @@ You can also use presets from [Easing.net](https://easings.net/) as string.
 ### Spring() effect
 A spring effect is include, simply use 'spring()' as string in your easing option.
 Read [this page](https://blog.maximeheckel.com/posts/the-physics-behind-spring-animations/) to learn more about spring effect and use the simulator.
+
 ```JS
 // Options
 {
@@ -198,6 +199,16 @@ You can check the number of computed steps by adding 'log' in your string.
 ```JS
  easing: 'spring(250) log'
  // 82
+```
+
+### Caution
+Only two keyframes can be set within the array. Be sure to specify properties in exact same order.
+```JS
+// Keyframes
+[
+  {transform: 'translateX(100%) scale(0.3)', opacity: 0}, 
+  {transform: 'translateX(0) scale(1)', opacity: 1}      
+]
 ```
 
 &nbsp;
@@ -501,7 +512,7 @@ Please be sure to undestand how works the API to use it (root, target, threshold
     // set markers to true to see helpers on your screen
     once: false,
     // set to true if you want disable the observer once the animation is finished
-    toggleAction: 'play pause reverse reset',
+    toggleActions: 'play pause reverse reset',
     // set quick actions depending of scroll action (enter / leave / enterback / leaveback)
     // actions list: none, play, pause, resume, reverse, complete, restart, reset
     pin: false,

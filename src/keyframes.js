@@ -9,6 +9,7 @@ export function setKeyframes(keyframes, options){
 }
 
 function getKeyframesProperties(keyframes, easingConfig){
+
   // Obj keys, css class name
   let firstFrameProperties = [];
   let lastFrameProperties = [];
@@ -43,6 +44,10 @@ function getKeyframesProperties(keyframes, easingConfig){
 
   const newKeyframes = fillKeyframes(firstFrameProperties, firstFrameContent, stepsValues, animationLength);
   
+  // Add first and last keyframes 
+  newKeyframes.unshift(keyframes[0]);
+  newKeyframes.push(keyframes[1]);
+
   return newKeyframes;
 }
 

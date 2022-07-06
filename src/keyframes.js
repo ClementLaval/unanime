@@ -1,13 +1,14 @@
-export function setKeyframes(keyframes, options){
-  
-  if(options.easing && typeof options.easing === 'object'){
-    return getKeyframesProperties(keyframes)
+import { spring, lerp } from './easing.js'
+
+export function setKeyframes(keyframes, options){  
+  if(options.easing && options.easing.startsWith('spring')){
+    return getKeyframesProperties(keyframes, options.easing)
   } else{
-    return keyframes;
-  }
+    return keyframes;   
+  } 
 }
 
-function getKeyframesProperties(keyframes){
+function getKeyframesProperties(keyframes, easingConfig){
   // Obj keys, css class name
   let firstFrameProperties = [];
   let lastFrameProperties = [];
@@ -34,9 +35,12 @@ function getKeyframesProperties(keyframes){
     lastFrameValues.push(extractNumbers(value));
   }
 
-  const stepsValues = getStepsValues(firstFrameValues, lastFrameValues);
+  const computedAnimation = getComputedAnimation(easingConfig);
+  const animationLength = computedAnimation.length; 
 
-  const newKeyframes = fillKeyframes(firstFrameProperties, firstFrameContent, stepsValues);
+  const stepsValues = getStepsValues(firstFrameValues, lastFrameValues, computedAnimation, animationLength);
+
+  const newKeyframes = fillKeyframes(firstFrameProperties, firstFrameContent, stepsValues, animationLength);
   
   return newKeyframes;
 }
@@ -59,8 +63,8 @@ function removeNumbers(value){
 }
 
 // Calcul each steps from 0% to 100%
-function getStepsValues(firstFrameValues, lastFrameValues){
-  let valuesArray = [];
+function getStepsValues(firstFrameValues, lastFrameValues, computedAnimation, animationLength){
+  let valuesArray = []; 
   // Number of differente css properties
   firstFrameValues.map((property, index) => {
     let propertyArray = [];
@@ -68,12 +72,9 @@ function getStepsValues(firstFrameValues, lastFrameValues){
       const firstValue = firstFrameValues[index][idx];
       const lastValue = lastFrameValues[index][idx];
       let localArray = [];
-
-      for(let i=0; i < 100; i++){
-        let t = i / 100;
-        let p = spring(t);
-        
-        localArray.push(lerp(firstValue, lastValue, p)); 
+      for(let i=0; i < animationLength; i++){   
+        let t = i / animationLength;  
+        localArray.push(lerp(firstValue, lastValue, computedAnimation[i])); 
       }         
       propertyArray.push(localArray);
     })
@@ -83,17 +84,8 @@ function getStepsValues(firstFrameValues, lastFrameValues){
   return valuesArray;
 }
 
-function spring(t){
-  const tension = 6;
-  return -0.5 * (2.71828 ** (-6 * t)) * (-2 * (2.71828 ** (6 * t)) + Math.sin(6 * t) + 6 * Math.cos(tension* t));     
-}
-
-function lerp(a, b, p){
-  return a + p * (b - a);
-}
-
 // Rebuild keyframes with computed values
-function fillKeyframes(properties, contents, stepsValues){
+function fillKeyframes(properties, contents, stepsValues, animationLength){
   let keyframesArray = [];
 
   const contentsWithoutDollar = [];
@@ -113,7 +105,7 @@ function fillKeyframes(properties, contents, stepsValues){
     contentsWithoutDollar.push(content);
   })
   
-  for(let i=0; i < 100; i++){
+  for(let i=0; i < animationLength; i++){
     const keyframe = {};
     properties.forEach((property, index) => {
       let tempKeyframe;
@@ -132,4 +124,28 @@ function fillKeyframes(properties, contents, stepsValues){
   }
 
   return keyframesArray; 
+}
+
+function getComputedAnimation(easingConfig){
+  if(easingConfig.startsWith('spring')){
+    const {shiftness, mass, damping} = returnSpringOptions(easingConfig);
+    return spring(shiftness, mass, damping);                  
+  }
+}
+
+function returnSpringOptions(easingConfig){
+  const regexp = /[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)/g;
+  let options = easingConfig.match(regexp);
+
+  let config = {
+    shiftness: (options && options[0] >= 50) && options[0] || 50, 
+    mass: (options && options[1] >= 1) && options[1] || 1, 
+    damping: (options && options[2] >= 1) && options[2] || 10, 
+  }
+
+  for (const [key, value] of Object.entries(config)){  
+    config[key] = Number(value);
+  }
+
+  return config;    
 }

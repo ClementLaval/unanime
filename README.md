@@ -186,10 +186,11 @@ Read [this page](https://blog.maximeheckel.com/posts/the-physics-behind-spring-a
 ```
 You can also change spring settings:
 ```JS
- easing: 'spring(stiffness, mass, damping)'
+ easing: 'spring(stiffness, mass, damping, offset)'
  // stiffness: min 50 || default 50
  // mass: min 1 || default 1
  // damping: min 1 || default 10
+ // offset: min 0.1 || default 1
 ```
 I recommand you to change only the first param "stiffness" only at beginning, more you change "mass" more you need to calculate animations steps positions. Damping don't really need to be change.
 Don't forget to change the animation duration to have a good feelings.
@@ -200,6 +201,8 @@ You can check the number of computed steps by adding 'log' in your string.
  easing: 'spring(250) log'
  // 82
 ```
+### Offset
+Sometimes the end of animation is a little too long, because of very small movements computed. You can decide to cut the end by adding the last param (offset): 1 = full animation , 0.5 = half.
 
 ### Caution
 Only two keyframes can be set within the array. Be sure to specify properties in exact same order.

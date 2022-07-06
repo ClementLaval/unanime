@@ -175,7 +175,7 @@ You can use normal css easing like 'ease-in' or cubic-bezier() property.
 You can also use presets from [Easing.net](https://easings.net/) as string.
 
 ### Spring() effect
-A spring effect is include, simply use 'string()' (string) in your easing option.
+A spring effect is include, simply use 'spring()' as string in your easing option.
 Read [this page](https://blog.maximeheckel.com/posts/the-physics-behind-spring-animations/) to learn more about spring effect and use the simulator.
 ```JS
 // Options
@@ -186,9 +186,9 @@ Read [this page](https://blog.maximeheckel.com/posts/the-physics-behind-spring-a
 You can also change spring settings:
 ```JS
  easing: 'spring(stiffness, mass, damping)'
- // stiffness: min 50 - default 50
- // mass: min 1 - default 1
- // damping: min 1 - default 10
+ // stiffness: min 50 || default 50
+ // mass: min 1 || default 1
+ // damping: min 1 || default 10
 ```
 I recommand you to change only the first param "stiffness" only at beginning, more you change "mass" more you need to calculate animations steps positions. Damping don't really need to be change.
 Don't forget to change the animation duration to have a good feelings.

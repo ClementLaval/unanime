@@ -91,6 +91,21 @@ Use all CSS(Js) property you want.
 ]
 ```
 &nbsp;
+### Offset
+Add 'offset' property in a single frame to change the effect duration. (endpoint)
+
+Example:
+
+```JS
+// Keyframes
+[
+  {opacity: 0,},
+  {opacity: 0.2, offset: 0.8}, // opacity takes 0.8 of the animation duration to become 0.2
+  {opacity: 1}
+]
+```
+
+&nbsp;
 ## Options
 Set your options, they all have a default value specified.
 You can use an anonymous function on every property.
@@ -154,6 +169,37 @@ const myAnimation = animate(
 
 myAnimation.play();
 ```
+&nbsp;
+## Easing
+You can use normal css easing like 'ease-in' or cubic-bezier() property.
+You can also use presets from [Easing.net](https://easings.net/) as string.
+
+### Spring() effect
+A spring effect is include, simply use 'string()' (string) in your easing option.
+Read [this page](https://blog.maximeheckel.com/posts/the-physics-behind-spring-animations/) to learn more about spring effect and use the simulator.
+```JS
+// Options
+{
+  easing: 'spring()' // will be init with default config spring(50, 1, 10)
+}
+```
+You can also change spring settings:
+```JS
+ easing: 'spring(stiffness, mass, damping)'
+ // stiffness: min 50 - default 50
+ // mass: min 1 - default 1
+ // damping: min 1 - default 10
+```
+I recommand you to change only the first param "stiffness" only at beginning, more you change "mass" more you need to calculate animations steps positions. Damping don't really need to be change.
+Don't forget to change the animation duration to have a good feelings.
+
+### Log steps count
+You can check the number of computed steps by adding 'log' in your string.
+```JS
+ easing: 'spring(250) log'
+ // 82
+```
+
 &nbsp;
 ## Running
 Animation is not running by default, you have three options: 

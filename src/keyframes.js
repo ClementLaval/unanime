@@ -37,6 +37,7 @@ function getKeyframesProperties(keyframes, easingConfig){
 
   const computedAnimation = getComputedAnimation(easingConfig);
   const animationLength = computedAnimation.length; 
+  if(easingConfig.includes('log')) console.log(animationLength);
 
   const stepsValues = getStepsValues(firstFrameValues, lastFrameValues, computedAnimation, animationLength);
 
@@ -127,9 +128,10 @@ function fillKeyframes(properties, contents, stepsValues, animationLength){
 }
 
 function getComputedAnimation(easingConfig){
+  // Spring
   if(easingConfig.startsWith('spring')){
-    const {shiftness, mass, damping} = returnSpringOptions(easingConfig);
-    return spring(shiftness, mass, damping);                  
+    const {stiffness, mass, damping} = returnSpringOptions(easingConfig);
+    return spring(stiffness, mass, damping);                 
   }
 }
 
@@ -138,7 +140,7 @@ function returnSpringOptions(easingConfig){
   let options = easingConfig.match(regexp);
 
   let config = {
-    shiftness: (options && options[0] >= 50) && options[0] || 50, 
+    stiffness: (options && options[0] >= 50) && options[0] || 50, 
     mass: (options && options[1] >= 1) && options[1] || 1, 
     damping: (options && options[2] >= 1) && options[2] || 10, 
   }

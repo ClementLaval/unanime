@@ -99,3 +99,46 @@ export function easing(easing, index, targetsIndexLength){
     }
   }
 }
+
+function spring(stiffness, mass, damping){
+  /* Spring Length, set to 1 for simplicity */
+  let springLength = 1;
+
+  /* Object position and velocity. */
+  let x = 2;
+  let v = 0;
+
+  /* Spring stiffness, in kg / s^2 */
+  let k = -stiffness;
+
+  /* Damping constant, in kg / s */
+  let d = -damping;
+
+  /* Framerate: we want 60 fps hence the framerate here is at 1/60 */
+  let frameRate = 1 / 60;
+
+  let positions = [];
+  let i = 0;
+
+  /* We loop 600 times, i.e. for 600 frames which is equivalent to 10s*/
+  while (i < 600) {
+    let Fspring = k * (x - springLength);
+    let Fdamping = d * v;
+
+    let a = (Fspring + Fdamping) / mass;
+    v += a * frameRate;
+    x += v * frameRate;
+
+    i++;
+
+    positions.push({
+      position: x,
+      frame: i,
+    });
+  }
+
+  return positions;
+};
+
+const toto = spring(40, 3.8, 2.8);
+console.log(toto);

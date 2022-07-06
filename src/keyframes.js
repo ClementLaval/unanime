@@ -73,7 +73,7 @@ function getStepsValues(firstFrameValues, lastFrameValues){
         let t = i / 100;
         let p = spring(t);
         
-        localArray.push(lerp(firstValue, lastValue, p));
+        localArray.push(lerp(firstValue, lastValue, p)); 
       }         
       propertyArray.push(localArray);
     })
@@ -84,7 +84,8 @@ function getStepsValues(firstFrameValues, lastFrameValues){
 }
 
 function spring(t){
-  return -0.5 * (2.71828 ** (-6 * t)) * (-2 * (2.71828 ** (6 * t)) + Math.sin(12 * t) + 2 * Math.cos(12 * t));
+  const tension = 6;
+  return -0.5 * (2.71828 ** (-6 * t)) * (-2 * (2.71828 ** (6 * t)) + Math.sin(6 * t) + 6 * Math.cos(tension* t));     
 }
 
 function lerp(a, b, p){

@@ -57,16 +57,6 @@ export async function initObserver(options, animate){
     })) 
   } 
   
-  // Create Observer List
-  let observersList = [];
-  extraOptions.target.map(target => {
-    observersList.push(new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, extraOptions, triggerActions, markersList), mainOptions));
-  })
-  
-  observersList.forEach((observer, index) => {
-    observer.observe(extraOptions.target[index])
-  })
-
   // Refresh Options Display
   animate.options.observer = {
     target: extraOptions.target,
@@ -83,10 +73,23 @@ export async function initObserver(options, animate){
     pinOptions: extraOptions.pinOptions,
     markersList: markersList,
     refreshInterval: extraOptions.refreshInterval,
-    observersList: observersList,
     triggerActions: triggerActions
   } 
+
+  // Create Observer List
+  let observersList = [];
+  extraOptions.target.map(target => {
+    observersList.push(new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate), mainOptions));
+  })
   
+  observersList.forEach((observer, index) => {
+    observer.observe(extraOptions.target[index])
+  })
+
+  // Refresh Options Display
+  animate.options.observer.observersList = observersList;
+  if(animate.options.observer.once === true) animate.options.observer.onceStatus = 'pending';
+
   // Check resize
   let isRefreshing;
   if(!isMobile){  // disable on mobile
@@ -96,7 +99,7 @@ export async function initObserver(options, animate){
       setTimeout(() => {
         isRefreshing = false;
         animate.refreshObserver();
-      }, 2000);
+      }, 500);
     }, false);
   }
   
@@ -115,7 +118,9 @@ export async function initObserver(options, animate){
 // Refresh
 export async function refresh(delay, animate){
   const Observer = animate.options.observer;
- 
+
+  if(Observer?.onceStatus === 'done') return;
+  
   if(delay) await sleep(delay);
 
   if(Observer.overlay === true){
@@ -125,7 +130,7 @@ export async function refresh(delay, animate){
   Observer.observersList.map(observer => observer.disconnect());  
 
   if(Observer.markers === true){
-    removeMarkers(Observer.markersList, Observer);
+    removeMarkers(Observer.markersList, Observer.overlay);
   }
 
   Observer.target = Observer.targetRaw;
@@ -348,7 +353,9 @@ function getAction(action){
 // Handle Intersect
 let prevRatio = 0;
 let firstTick = true;
-function handleIntersect(entries, observer, animate, extraOptions, triggerActions, markers){
+function handleIntersect(entries, observer, animate){
+  const Observer = animate.options.observer;
+
   entries.forEach((entry) => {
     let isEntering, isLeaving, isBelow;
     entry.intersectionRatio > prevRatio ? (isEntering = true, isLeaving = false) : (isEntering = false, isLeaving = true);
@@ -357,43 +364,44 @@ function handleIntersect(entries, observer, animate, extraOptions, triggerAction
     if(firstTick) return firstTick = false; // bypass first tick (load tick)
 
     if(isEntering && isBelow){
-      if(triggerActions.onEnter) triggerActions.onEnter();
-      if(extraOptions.pin){animate.scrub(entry.intersectionRatio, extraOptions.pinOptions)}
-      else{(extraOptions.toggleActions.onEnter) && animate[extraOptions.toggleActions.onEnter]()}
-      if(extraOptions.once && !extraOptions.pin) animate.onFinish(() => removeMarkers(markers, extraOptions), observer.disconnect());
-      if(extraOptions.once && extraOptions.pin) entry.intersectionRatio > 0.95 && function(){removeMarkers(markers, extraOptions); observer.disconnect()}();
+      if(Observer.triggerActions.onEnter) Observer.triggerActions.onEnter();
+      if(Observer.pin){animate.scrub(entry.intersectionRatio, Observer.pinOptions)}
+      else{(Observer.toggleActions.onEnter) && animate[Observer.toggleActions.onEnter]()}
+      if(Observer.once && !Observer.pin) animate.onFinish(() => removeMarkers(Observer.markersList, Observer.overlay), observer.disconnect(), Observer.onceStatus = 'done');
+      if(Observer.once && Observer.pin) entry.intersectionRatio > 0.95 && function(){removeMarkers(Observer.markersList, Observer.overlay); observer.disconnect(); Observer.onceStatut = 'done'}();
     }
     else if(isLeaving && !isBelow){
-      if(triggerActions.onLeave) triggerActions.onLeave();
-      if(extraOptions.pin){return; animate.scrub(1 - entry.intersectionRatio)}
-      else{(extraOptions.toggleActions.onLeave) && animate[extraOptions.toggleActions.onLeave]()}
+      if(Observer.triggerActions.onLeave) Observer.triggerActions.onLeave();
+      if(Observer.pin){return; animate.scrub(1 - entry.intersectionRatio)}
+      else{(Observer.toggleActions.onLeave) && animate[Observer.toggleActions.onLeave]()}
     }
     else if(isEntering && !isBelow){
-      if(triggerActions.onEnterBack) triggerActions.onEnterBack();
-      if(extraOptions.pin){return; animate.scrub(1 - entry.intersectionRatio)}
-      else{(extraOptions.toggleActions.onEnterBack) && animate[extraOptions.toggleActions.onEnterBack]()}
+      if(Observer.triggerActions.onEnterBack) Observer.triggerActions.onEnterBack();
+      if(Observer.pin){return; animate.scrub(1 - entry.intersectionRatio)}
+      else{(Observer.toggleActions.onEnterBack) && animate[Observer.toggleActions.onEnterBack]()}
     }
     else if(isLeaving && isBelow){
-      if(triggerActions.onLeaveBack) triggerActions.onLeaveBack();
-      if(extraOptions.pin){animate.scrub(entry.intersectionRatio, extraOptions.pinOptions)}
-      else{(extraOptions.toggleActions.onLeaveBack) && animate[extraOptions.toggleActions.onLeaveBack]()}
+      if(Observer.triggerActions.onLeaveBack) Observer.triggerActions.onLeaveBack();
+      if(Observer.pin){animate.scrub(entry.intersectionRatio, Observer.pinOptions)}
+      else{(Observer.toggleActions.onLeaveBack) && animate[Observer.toggleActions.onLeaveBack]()}
     }
     prevRatio = entry.intersectionRatio;
   });
 }
 
 // Remove markers
-function removeMarkers(markersList, extraOptions){
+function removeMarkers(markersList, overlay){
   if(!markersList) return;
   markersList.map(markers => {
     markers.rootMarker.remove();
     markers.startMarker.remove();
     markers.endMarker.remove();
     markers.thresholdsMarkers.forEach(threshold => threshold.remove());
-    if(extraOptions.overlay === true){
+    if(overlay === true){
       markers.target.remove();
     }else{
       markers.target.style.opacity = '1';
+      markers.target.style.backgroundColor = 'inherit';
     }
   });
 }

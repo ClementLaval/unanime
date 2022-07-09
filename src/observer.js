@@ -90,7 +90,10 @@ export async function initObserver(options, animate){
 
   // Refresh Options Display
   animate.options.observer.observersList = observersList;
-  if(animate.options.observer.once === true) animate.options.observer.onceStatus = 'pending';
+  if(animate.options.observer.once === true){
+    animate.options.observer.onceStatus  = Array.from(observersList.map(status => 'pending'));
+  }
+
 
   // Check resize
   let isRefreshing;
@@ -121,18 +124,43 @@ export async function initObserver(options, animate){
 export async function refresh(delay, animate){
   const Observer = animate.options.observer;
 
-  if(Observer?.onceStatus === 'done') return;
+  let notOnceDone;
+  if(Observer.once === true){
+    notOnceDone = Array.from(Observer.onceStatus.map((status, index) => status === 'pending' ? index : null)).filter(Number);
+    if(notOnceDone.length === 0) return;
+  }
   
   if(delay) await sleep(delay);
 
   if(Observer.overlay === true){
-    Observer.target.map(target => target.remove());
+    if(Observer.once === true){
+      for(const index in notOnceDone){
+        Observer.target[index].remove();
+      }
+    }else{
+      Observer.target.map(target => target.remove());
+    }
   }
   
-  Observer.observersList.map(observer => observer.disconnect());  
+  if(Observer.once === true){
+    for(const index in notOnceDone){
+      Observer.observersList[index].disconnect();
+    }
+  }else{
+    Observer.observersList.map(observer => observer.disconnect());  
+  }
 
   if(Observer.markers === true){
-    removeMarkers(Observer.markersList, Observer.overlay);
+    if(Observer.once === true){
+      let markersList = [];
+      for(const index in notOnceDone){
+        markersList.push(Observer.markersList[index]);
+      }
+      console.log(markersList);
+      removeMarkers(markersList, Observer.overlay);
+    }else{
+      removeMarkers(Observer.markersList, Observer.overlay);      
+    }
   }
 
   Observer.target = Observer.targetRaw;
@@ -160,43 +188,14 @@ export async function refresh(delay, animate){
   if(Observer.triggerActions.onRefresh) Observer.triggerActions.onRefresh();
 }
 
-// Detect if array, return parentNode
-// function getTarget(target){ 
-//   if(!target || target.length === 0) return null;
-//   target = Array.prototype.slice.call(target);
-
-//   if(Array.isArray(target) && target.some(el => Array.isArray(el))){
-//     let array = [];
-//     target.map(el => {
-//       if(Array.isArray(el) && el.length > 1){
-//         array.push(el[0].parentNode);
-//       }else if(Array.isArray(el)){
-//         array.push(el[0]);
-//       }else{
-//         array.push(el);
-//       }
-//     })
-//     return array;
-//   }else if(Array.isArray(target)){
-//     if(target.length > 1){
-//       return new Array(target[0].parentNode);
-//     }else{
-//       return new Array(target[0]);
-//     }
-//   }else{
-//     return new Array(target);
-//   }
-// }
-
+// Return targets and destructure arrays
 function getTarget(target){
   target = [...target];
   if(!target || target.length === 0) return null;
   let targetsList = [];
   for(const el of target){
-    if(Array.isArray(el)){
-      // targetsList.push(el)
-      el.map(item => targetsList.push(item));
-      // targetsList.push(el[0].parentNode)
+    if(Array.isArray(el)){     
+      el.map(item => targetsList.push(item));      
     }else{
       targetsList.push(el)
     }
@@ -386,8 +385,8 @@ function handleIntersect(entries, observer, animate, obsIndex){
       if(Observer.triggerActions.onEnter) Observer.triggerActions.onEnter(entry);
       if(Observer.pin){animate.scrub(entry.intersectionRatio, Observer.pinOptions)}
       else{(Observer.toggleActions.onEnter) && animate[Observer.toggleActions.onEnter](obsIndex)}
-      if(Observer.once && !Observer.pin) animate.onFinish(() => removeMarkers(Observer.markersList, Observer.overlay), observer.disconnect(), Observer.onceStatus = 'done');
-      if(Observer.once && Observer.pin) entry.intersectionRatio > 0.95 && function(){removeMarkers(Observer.markersList, Observer.overlay); observer.disconnect(); Observer.onceStatut = 'done'}();
+      if(Observer.once && !Observer.pin) animate.onFinish(function(){removeMarkers(Observer.markersList, Observer.overlay, obsIndex); disconnectObserver(obsIndex, Observer.observersList); updateOnceStatus(obsIndex, Observer.onceStatus)}, obsIndex);
+      if(Observer.once && Observer.pin) entry.intersectionRatio > 0.95 && function(){removeMarkers(Observer.markersList, Observer.overlay, obsIndex); disconnectObserver(obsIndex, Observer.observersList); updateOnceStatus(obsIndex, Observer.onceStatus)}();
     }
     else if(isLeaving && !isBelow){
       if(Observer.triggerActions.onLeave) Observer.triggerActions.onLeave(entry);
@@ -409,8 +408,9 @@ function handleIntersect(entries, observer, animate, obsIndex){
 }
 
 // Remove markers
-function removeMarkers(markersList, overlay){
+function removeMarkers(markersList, overlay, obsIndex){
   if(!markersList) return;
+  if(typeof obsIndex === 'number') markersList = [[...markersList][obsIndex]];
   markersList.map(markers => {
     markers.rootMarker.remove();
     markers.startMarker.remove();
@@ -423,4 +423,20 @@ function removeMarkers(markersList, overlay){
       markers.target.style.backgroundColor = 'inherit';
     }
   });
+}
+
+function disconnectObserver(obsIndex, observersList){
+  if(typeof obsIndex === 'number'){
+    return observersList[obsIndex].disconnect();
+  }
+
+  observersList.map(observer => observer.disconnect());
+}
+
+function updateOnceStatus(obsIndex, onceStatus){
+  if(typeof obsIndex === 'number'){
+    return onceStatus[obsIndex] = 'done';
+  }
+
+  onceStatus.map(status => 'done');
 }

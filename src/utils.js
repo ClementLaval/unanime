@@ -47,7 +47,6 @@ export function retrieveAnimationIndex(index, animationsArray){
       if(index <= 0){
         mainIndex = i;
         secondIndex = index + arrayLength[i] - 1;
-        console.log(mainIndex, secondIndex);
         return {mainIndex, secondIndex}
       }
     }

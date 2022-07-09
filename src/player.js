@@ -3,7 +3,7 @@ import { retrieveAnimationIndex } from "./utils.js"
 export function play(index, animationsArray, onPlayAction){
   if(typeof index === 'number'){
     const {mainIndex, secondIndex} =  retrieveAnimationIndex(index, animationsArray);
-    return animationsArray[mainIndex][secondIndex].play()
+    return animationsArray[mainIndex][secondIndex].play();
   } 
   animationsArray.map(animationIndex => {
     animationIndex.forEach(animation => {      
@@ -13,7 +13,11 @@ export function play(index, animationsArray, onPlayAction){
   if(onPlayAction) onPlayAction(); 
 }
 
-export function pause(animationsArray, onPauseAction){
+export function pause(index, animationsArray, onPauseAction){
+  if(typeof index === 'number'){
+    const {mainIndex, secondIndex} =  retrieveAnimationIndex(index, animationsArray);
+    return animationsArray[mainIndex][secondIndex].pause();
+  } 
   animationsArray.map(animationIndex => {
     animationIndex.forEach(animation => {
       animation.pause();
@@ -22,7 +26,15 @@ export function pause(animationsArray, onPauseAction){
   if(onPauseAction) onPauseAction(); 
 }
 
-export function restart(animationsArray){
+export function restart(index, animationsArray){
+  if(typeof index === 'number'){
+    const {mainIndex, secondIndex} =  retrieveAnimationIndex(index, animationsArray);
+    animationsArray[mainIndex][secondIndex].pause();
+    animationsArray[mainIndex][secondIndex].playbackRate = Math.abs(animationsArray[mainIndex][secondIndex].playbackRate);  
+    animationsArray[mainIndex][secondIndex].currentTime = 0;
+    animationsArray[mainIndex][secondIndex].play();
+    return;
+  } 
   animationsArray.map(animationIndex => {
     animationIndex.forEach(animation => {
       animation.pause();
@@ -33,7 +45,11 @@ export function restart(animationsArray){
   })
 }
 
-export function cancel(animationsArray){
+export function cancel(index, animationsArray){
+  if(typeof index === 'number'){
+    const {mainIndex, secondIndex} =  retrieveAnimationIndex(index, animationsArray);
+    return animationsArray[mainIndex][secondIndex].cancel()
+  } 
   animationsArray.map(animationIndex => {
     animationIndex.forEach(animation => {
       animation.cancel();
@@ -41,7 +57,13 @@ export function cancel(animationsArray){
   })
 }
 
-export function reset(animationsArray){
+export function reset(index, animationsArray){
+  if(typeof index === 'number'){
+    const {mainIndex, secondIndex} =  retrieveAnimationIndex(index, animationsArray);
+    animationsArray[mainIndex][secondIndex].playbackRate = Math.abs(animationsArray[mainIndex][secondIndex].playbackRate);  
+    animationsArray[mainIndex][secondIndex].currentTime = 0;
+    animationsArray[mainIndex][secondIndex].pause();
+  } 
   animationsArray.map(animationIndex => {
     animationIndex.forEach(animation => {
       animation.playbackRate = Math.abs(animation.playbackRate);    
@@ -51,7 +73,11 @@ export function reset(animationsArray){
   })
 }
 
-export function finish(animationsArray){
+export function finish(index, animationsArray){
+  if(typeof index === 'number'){
+    const {mainIndex, secondIndex} =  retrieveAnimationIndex(index, animationsArray);
+    return animationsArray[mainIndex][secondIndex].finish();
+  } 
   animationsArray.map(animationIndex => {
     animationIndex.forEach(animation => {
       animation.finish();
@@ -59,7 +85,11 @@ export function finish(animationsArray){
   })
 }
 
-export function reverse(animationsArray){
+export function reverse(index, animationsArray){
+  if(typeof index === 'number'){
+    const {mainIndex, secondIndex} =  retrieveAnimationIndex(index, animationsArray);
+    return animationsArray[mainIndex][secondIndex].reverse();
+  } 
   animationsArray.map(animationIndex => {
     animationIndex.forEach(animation => {
       animation.reverse();

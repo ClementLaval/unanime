@@ -515,6 +515,8 @@ Please be sure to undestand how works the API to use it (root, target, threshold
     // set markers to true to see helpers on your screen
     once: false,
     // set to true if you want disable the observer once the animation is finished
+    split: false,
+    // set to true to split each target and control his own animation
     toggleActions: 'play pause reverse reset',
     // set quick actions depending of scroll action (enter / leave / enterback / leaveback)
     // actions list: none, play, pause, resume, reverse, complete, restart, reset
@@ -524,10 +526,11 @@ Please be sure to undestand how works the API to use it (root, target, threshold
       smoothness: 0.05, // default 0.05, go under to give more smoothness
       delay: 80 // default 0, to add delay between scroll and animation
     },
-    onEnter: () => {
-      console.log('ENTER');
+    onEnter: (entry) => {
+      console.log('ENTERING' + entry.target);
     },
     // triggered action when root scroll down and enter in target area
+    // can access entry
     onLeave: () => {
       console.log('LEAVE');
     },

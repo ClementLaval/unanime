@@ -29,3 +29,27 @@ export function reversePlayback(animationsArray){
 
   return animationsArray;
 }
+
+export function retrieveAnimationIndex(index, animationsArray){
+  let mainIndex, secondIndex;
+  index++;
+  
+  if(index <= animationsArray[0].length){
+    mainIndex = 0;
+    secondIndex = index - 1;
+    return {mainIndex, secondIndex}
+  }
+  
+  else if(index > animationsArray[0].length){
+    const arrayLength = Array.from(animationsArray.map(array => array.length));
+    for(let i=0; i < arrayLength.length; i++){
+      index -= arrayLength[i];
+      if(index <= 0){
+        mainIndex = i;
+        secondIndex = index + arrayLength[i] - 1;
+        console.log(mainIndex, secondIndex);
+        return {mainIndex, secondIndex}
+      }
+    }
+  }
+}

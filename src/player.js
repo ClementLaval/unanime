@@ -1,7 +1,13 @@
-export function play(animationsArray, onPlayAction){
+import { retrieveAnimationIndex } from "./utils.js"
+
+export function play(index, animationsArray, onPlayAction){
+  if(typeof index === 'number'){
+    const {mainIndex, secondIndex} =  retrieveAnimationIndex(index, animationsArray);
+    return animationsArray[mainIndex][secondIndex].play()
+  } 
   animationsArray.map(animationIndex => {
     animationIndex.forEach(animation => {      
-      animation.play();
+      animation.play();  
     });
   })
   if(onPlayAction) onPlayAction(); 

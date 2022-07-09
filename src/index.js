@@ -19,7 +19,7 @@ function animate(targets, keyframes, options){
     keyframes: keyframes,
     options: getOptionsDisplay(options, optionsComputed),
     // Player
-    play: () => play(animationsArray, animate.onPlayAction),
+    play: (index) => play(index, animationsArray, animate.onPlayAction),
     pause: () => pause(animationsArray, animate.onPauseAction), 
     restart: () => restart(animationsArray),
     cancel: () => cancel(animationsArray),

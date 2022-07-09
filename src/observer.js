@@ -1,14 +1,14 @@
 import { sleep } from './utils.js'
 
 export async function initObserver(options, animate){
-  
+
   // Main options
   const mainOptions = {
     root: document.querySelector(options.root) || null,
     rootMargin: options.rootMargin || '0px',
     threshold: options?.pin === true && !options.threshold ? getThreshold(100) :  getThreshold(options.threshold) || 0
   }
-
+  
   // Extra options
   let extraOptions = {
     target: getTarget(document.querySelectorAll(options.target)) || getTarget(animate.targets),
@@ -16,6 +16,7 @@ export async function initObserver(options, animate){
     targetMargin: options.targetMargin || '0px',
     toggleActions: getToggleActions(options.toggleActions) || getToggleActions('play none none none'),
     once: options.once || false,
+    split: options.split || false,
     markers: options.markers || false,
     overlay: options.overlay || false,
     refreshInterval: options.refreshInterval || -1,
@@ -25,7 +26,7 @@ export async function initObserver(options, animate){
       delay: options.pinOptions?.delay || 0
     } 
   }
-  
+ 
   // triggerActions
   const triggerActions = {
     onEnter: options.onEnter || null,
@@ -67,6 +68,7 @@ export async function initObserver(options, animate){
     threshold: mainOptions.threshold,
     toggleActions: extraOptions.toggleActions,
     once: extraOptions.once,
+    split: extraOptions.split,
     markers: extraOptions.markers,
     overlay: extraOptions.overlay,
     pin: extraOptions.pin,
@@ -78,12 +80,12 @@ export async function initObserver(options, animate){
 
   // Create Observer List
   let observersList = [];
-  extraOptions.target.map(target => {
-    observersList.push(new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate), mainOptions));
+  extraOptions.target.map(( _, obsIndex) => {
+    observersList.push(new IntersectionObserver((entries, observer) => handleIntersect(entries, observer, animate, obsIndex), mainOptions));
   })
   
   observersList.forEach((observer, index) => {
-    observer.observe(extraOptions.target[index])
+    observer.observe(extraOptions.target[index]);
   })
 
   // Refresh Options Display
@@ -159,31 +161,47 @@ export async function refresh(delay, animate){
 }
 
 // Detect if array, return parentNode
-function getTarget(target){
-  if(!target || target.length === 0) return null;
-  target = Array.prototype.slice.call(target);
+// function getTarget(target){ 
+//   if(!target || target.length === 0) return null;
+//   target = Array.prototype.slice.call(target);
 
-  if(Array.isArray(target) && target.some(el => Array.isArray(el))){
-    let array = [];
-    target.map(el => {
-      if(Array.isArray(el) && el.length > 1){
-        array.push(el[0].parentNode);
-      }else if(Array.isArray(el)){
-        array.push(el[0]);
-      }else{
-        array.push(el);
-      }
-    })
-    return array;
-  }else if(Array.isArray(target)){
-    if(target.length > 1){
-      return new Array(target[0].parentNode);
+//   if(Array.isArray(target) && target.some(el => Array.isArray(el))){
+//     let array = [];
+//     target.map(el => {
+//       if(Array.isArray(el) && el.length > 1){
+//         array.push(el[0].parentNode);
+//       }else if(Array.isArray(el)){
+//         array.push(el[0]);
+//       }else{
+//         array.push(el);
+//       }
+//     })
+//     return array;
+//   }else if(Array.isArray(target)){
+//     if(target.length > 1){
+//       return new Array(target[0].parentNode);
+//     }else{
+//       return new Array(target[0]);
+//     }
+//   }else{
+//     return new Array(target);
+//   }
+// }
+
+function getTarget(target){
+  target = [...target];
+  if(!target || target.length === 0) return null;
+  let targetsList = [];
+  for(const el of target){
+    if(Array.isArray(el)){
+      // targetsList.push(el)
+      el.map(item => targetsList.push(item));
+      // targetsList.push(el[0].parentNode)
     }else{
-      return new Array(target[0]);
+      targetsList.push(el)
     }
-  }else{
-    return new Array(target);
   }
+  return targetsList;
 }
 
 // Detect threshold input type
@@ -353,37 +371,38 @@ function getAction(action){
 // Handle Intersect
 let prevRatio = 0;
 let firstTick = true;
-function handleIntersect(entries, observer, animate){
+function handleIntersect(entries, observer, animate, obsIndex){
   const Observer = animate.options.observer;
+  obsIndex = Observer.split === true ? obsIndex : null; //toggle split mode
 
-  entries.forEach((entry) => {
+  entries.map((entry) => {
     let isEntering, isLeaving, isBelow;
     entry.intersectionRatio > prevRatio ? (isEntering = true, isLeaving = false) : (isEntering = false, isLeaving = true);
     entry.boundingClientRect.top > entry.rootBounds.top ? isBelow = true : isBelow = false;
 
     if(firstTick) return firstTick = false; // bypass first tick (load tick)
-
+  
     if(isEntering && isBelow){
-      if(Observer.triggerActions.onEnter) Observer.triggerActions.onEnter();
+      if(Observer.triggerActions.onEnter) Observer.triggerActions.onEnter(entry);
       if(Observer.pin){animate.scrub(entry.intersectionRatio, Observer.pinOptions)}
-      else{(Observer.toggleActions.onEnter) && animate[Observer.toggleActions.onEnter]()}
+      else{(Observer.toggleActions.onEnter) && animate[Observer.toggleActions.onEnter](obsIndex)}
       if(Observer.once && !Observer.pin) animate.onFinish(() => removeMarkers(Observer.markersList, Observer.overlay), observer.disconnect(), Observer.onceStatus = 'done');
       if(Observer.once && Observer.pin) entry.intersectionRatio > 0.95 && function(){removeMarkers(Observer.markersList, Observer.overlay); observer.disconnect(); Observer.onceStatut = 'done'}();
     }
     else if(isLeaving && !isBelow){
-      if(Observer.triggerActions.onLeave) Observer.triggerActions.onLeave();
+      if(Observer.triggerActions.onLeave) Observer.triggerActions.onLeave(entry);
       if(Observer.pin){return; animate.scrub(1 - entry.intersectionRatio)}
-      else{(Observer.toggleActions.onLeave) && animate[Observer.toggleActions.onLeave]()}
+      else{(Observer.toggleActions.onLeave) && animate[Observer.toggleActions.onLeave](obsIndex)}
     }
     else if(isEntering && !isBelow){
-      if(Observer.triggerActions.onEnterBack) Observer.triggerActions.onEnterBack();
+      if(Observer.triggerActions.onEnterBack) Observer.triggerActions.onEnterBack(entry);
       if(Observer.pin){return; animate.scrub(1 - entry.intersectionRatio)}
-      else{(Observer.toggleActions.onEnterBack) && animate[Observer.toggleActions.onEnterBack]()}
+      else{(Observer.toggleActions.onEnterBack) && animate[Observer.toggleActions.onEnterBack](obsIndex)}
     }
     else if(isLeaving && isBelow){
-      if(Observer.triggerActions.onLeaveBack) Observer.triggerActions.onLeaveBack();
+      if(Observer.triggerActions.onLeaveBack) Observer.triggerActions.onLeaveBack(entry);
       if(Observer.pin){animate.scrub(entry.intersectionRatio, Observer.pinOptions)}
-      else{(Observer.toggleActions.onLeaveBack) && animate[Observer.toggleActions.onLeaveBack]()}
+      else{(Observer.toggleActions.onLeaveBack) && animate[Observer.toggleActions.onLeaveBack](obsIndex)}
     }
     prevRatio = entry.intersectionRatio;
   });

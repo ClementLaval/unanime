@@ -124,92 +124,68 @@ export async function initObserver(options, animate){
 export async function refresh(delay, animate){
   const Observer = animate.options.observer;
 
-  // notOnceDone: array of animation's index not done yet
-  let notOnceDone;
+  // isDoneArray: return true if animation's once status is already 'done'
+  let isDoneArray;
   if(Observer.once === true){
-    notOnceDone = Array.from(Observer.onceStatus.map((status, index) => status === 'pending' ? index : null)).filter(Number);
-    if(notOnceDone.length === 0) return;
+    // Build once status array
+    isDoneArray = Array.from(Observer.onceStatus.map(status => status === 'done' ? true : false));
+    if(!isDoneArray.includes(false)) return;
+
+    Observer.target = Observer.target.map((target, index) => isDoneArray[index] === true ? null : target);
+
+    Observer.observersList = Observer.observersList.map((observer, index) => isDoneArray[index] === true ? null : observer);
   }
   
   // delay
   if(delay) await sleep(delay);
 
   // remove overlays
-  if(Observer.overlay === true){
-    if(Observer.once === true){
-      for(const index in notOnceDone){
-        Observer.target[index].remove();
-      }
-    }else{
-      Observer.target.map(target => target.remove());
-    }
+  if(Observer.overlay === true){  
+    Observer.target.map(target => target && target.remove());
   }
   
   // disconnect observers
   if(Observer.once === true){
-    for(const index in notOnceDone){
-      Observer.observersList[index].disconnect();
-    }
-  }else{
-    Observer.observersList.map(observer => observer.disconnect());  
+    Observer.observersList.map(observer => observer && observer.disconnect());  
   }
 
   // remove markers
   if(Observer.markers === true){
-    if(Observer.once === true){
-      let markersList = [];
-      for(const index in notOnceDone){
-        markersList.push(Observer.markersList[index]);
-      }
-      removeMarkers(markersList, Observer.overlay);
-    }else{
-      removeMarkers(Observer.markersList, Observer.overlay);      
-    }
+    removeMarkers(Observer.markersList, Observer.overlay);      
   }
 
   // reset target
-  Observer.target = Observer.targetRaw;
+  if(Observer.once === true){
+    Observer.target = Observer.targetRaw.map((target, index) => isDoneArray[index] === true ? null : target);
+  }else{
+    Observer.target = Observer.targetRaw;
+  }
 
   // rebuild overlays
   if(Observer.overlay === true){    
     let targetsList = [];
-    if(Observer.once === true){
-      await Promise.all(Observer.target.map(async(target, index) => {
-        if(notOnceDone.includes(index)){
-          targetsList.push(await setTargetOverlay(target, Observer.targetMargin));
-        }else{
-          targetsList.push(target);
-        }
-      }))    
-    }else{
-      await Promise.all(Observer.target.map(async(target) => {
+
+    await Promise.all(Observer.target.map(async(target) => {
+      if(target){
         targetsList.push(await setTargetOverlay(target, Observer.targetMargin));
-      }))
-    }
+      }else{
+        targetsList.push(null);
+      }
+    }))    
     Observer.target = targetsList;
   }
 
   // Rebuild markers
   if(Observer.markers === true){
-    let markersList = [];
-    if(Observer.once === true){
-      await Promise.all(Observer.target.map(async(target, index) => {
-        if(notOnceDone.includes(index)){
-          markersList.push(await displayMarkers(Observer, target));
-        }else{
-          markersList.push(null);
-        }
-      })) 
-    }else{
-      await Promise.all(Observer.target.map(async(target) => {
+    let markersList = [];      
+    await Promise.all(Observer.target.map(async(target) => {
+      if(target){
         markersList.push(await displayMarkers(Observer, target));
-      })) 
-    }
+      }else{
+        markersList.push(null);
+      }
+    }))     
     Observer.markersList = markersList;
-  }
-
-  if(Observer.once === true){
-    Observer.observersList = [...Observer.observersList].map((observer, index) => notOnceDone.includes(index) ? observer : null);
   }
 
   // Restart listerner observer
@@ -258,8 +234,7 @@ function buildThresholdList(numSteps) {
   }
 
   // thresholds.push(0);
-  return thresholds;
-}
+  return thresholds;}
 
 // Display markers helper
 async function displayMarkers(options, target){
@@ -446,6 +421,7 @@ function removeMarkers(markersList, overlay, obsIndex){
   if(!markersList) return;
   if(typeof obsIndex === 'number') markersList = [[...markersList][obsIndex]];
   markersList.map(markers => {
+    if(!markers) return;
     markers.rootMarker.remove();
     markers.startMarker.remove();
     markers.endMarker.remove();

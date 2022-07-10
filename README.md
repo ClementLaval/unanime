@@ -213,6 +213,7 @@ Only two keyframes can be set within the array. Be sure to specify properties in
   {transform: 'translateX(0) scale(1)', opacity: 1}      
 ]
 ```
+Warning: some settings can cause infinite loop, in this case try another params.
 
 &nbsp;
 ## Running
@@ -274,13 +275,18 @@ Go immediatly to a specific moment of animation (number from 0 to 1).
 Go smoothely to a specific moment, new direction is calculed from the previous position, pass pinOptions as second argument ({smoothness: 0.05, delay: 0} // default)
 
 &nbsp;
+### Target specific index
+You can target a specific animation inside your animate targets's array, by adding the index as last argument (start at 0).
+
+&nbsp;
 
 *Example:*
 ```JS
 myAnimation.play();
 
 setTimeout(() => {
-  myAnimation.pause();
+  myAnimation.pause(2);
+  // pause the 3th target's animation after 2500ms
 }, 2500);
 ```
 &nbsp;

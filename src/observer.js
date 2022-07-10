@@ -145,9 +145,7 @@ export async function refresh(delay, animate){
   }
   
   // disconnect observers
-  if(Observer.once === true){
-    Observer.observersList.map(observer => observer && observer.disconnect());  
-  }
+  Observer.observersList.map(observer => observer && observer.disconnect());  
 
   // remove markers
   if(Observer.markers === true){
@@ -382,7 +380,6 @@ let firstTick = true;
 function handleIntersect(entries, observer, animate, obsIndex){
   const Observer = animate.options.observer;
   obsIndex = Observer.split === true ? obsIndex : null; //toggle split mode
-
   entries.map((entry) => {
     let isEntering, isLeaving, isBelow;
     entry.intersectionRatio > prevRatio ? (isEntering = true, isLeaving = false) : (isEntering = false, isLeaving = true);

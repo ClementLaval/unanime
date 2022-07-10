@@ -124,14 +124,17 @@ export async function initObserver(options, animate){
 export async function refresh(delay, animate){
   const Observer = animate.options.observer;
 
+  // notOnceDone: array of animation's index not done yet
   let notOnceDone;
   if(Observer.once === true){
     notOnceDone = Array.from(Observer.onceStatus.map((status, index) => status === 'pending' ? index : null)).filter(Number);
     if(notOnceDone.length === 0) return;
   }
   
+  // delay
   if(delay) await sleep(delay);
 
+  // remove overlays
   if(Observer.overlay === true){
     if(Observer.once === true){
       for(const index in notOnceDone){
@@ -142,6 +145,7 @@ export async function refresh(delay, animate){
     }
   }
   
+  // disconnect observers
   if(Observer.once === true){
     for(const index in notOnceDone){
       Observer.observersList[index].disconnect();
@@ -150,41 +154,71 @@ export async function refresh(delay, animate){
     Observer.observersList.map(observer => observer.disconnect());  
   }
 
+  // remove markers
   if(Observer.markers === true){
     if(Observer.once === true){
       let markersList = [];
       for(const index in notOnceDone){
         markersList.push(Observer.markersList[index]);
       }
-      console.log(markersList);
       removeMarkers(markersList, Observer.overlay);
     }else{
       removeMarkers(Observer.markersList, Observer.overlay);      
     }
   }
 
+  // reset target
   Observer.target = Observer.targetRaw;
 
+  // rebuild overlays
   if(Observer.overlay === true){    
     let targetsList = [];
-    await Promise.all(Observer.target.map(async(target) => {
-      targetsList.push(await setTargetOverlay(target, Observer.targetMargin));
-    })) 
+    if(Observer.once === true){
+      await Promise.all(Observer.target.map(async(target, index) => {
+        if(notOnceDone.includes(index)){
+          targetsList.push(await setTargetOverlay(target, Observer.targetMargin));
+        }else{
+          targetsList.push(target);
+        }
+      }))    
+    }else{
+      await Promise.all(Observer.target.map(async(target) => {
+        targetsList.push(await setTargetOverlay(target, Observer.targetMargin));
+      }))
+    }
     Observer.target = targetsList;
   }
 
+  // Rebuild markers
   if(Observer.markers === true){
     let markersList = [];
-    await Promise.all(Observer.target.map(async(target) => {
-      markersList.push(await displayMarkers(Observer, target));
-    })) 
+    if(Observer.once === true){
+      await Promise.all(Observer.target.map(async(target, index) => {
+        if(notOnceDone.includes(index)){
+          markersList.push(await displayMarkers(Observer, target));
+        }else{
+          markersList.push(null);
+        }
+      })) 
+    }else{
+      await Promise.all(Observer.target.map(async(target) => {
+        markersList.push(await displayMarkers(Observer, target));
+      })) 
+    }
     Observer.markersList = markersList;
   }
 
+  if(Observer.once === true){
+    Observer.observersList = [...Observer.observersList].map((observer, index) => notOnceDone.includes(index) ? observer : null);
+  }
+
+  // Restart listerner observer
   Observer.observersList.forEach((observer,index) => {
+    if(observer !== null)
     observer.observe(Observer.target[index])
   })
 
+  // Custom action
   if(Observer.triggerActions.onRefresh) Observer.triggerActions.onRefresh();
 }
 
@@ -385,8 +419,8 @@ function handleIntersect(entries, observer, animate, obsIndex){
       if(Observer.triggerActions.onEnter) Observer.triggerActions.onEnter(entry);
       if(Observer.pin){animate.scrub(entry.intersectionRatio, Observer.pinOptions)}
       else{(Observer.toggleActions.onEnter) && animate[Observer.toggleActions.onEnter](obsIndex)}
-      if(Observer.once && !Observer.pin) animate.onFinish(function(){removeMarkers(Observer.markersList, Observer.overlay, obsIndex); disconnectObserver(obsIndex, Observer.observersList); updateOnceStatus(obsIndex, Observer.onceStatus)}, obsIndex);
-      if(Observer.once && Observer.pin) entry.intersectionRatio > 0.95 && function(){removeMarkers(Observer.markersList, Observer.overlay, obsIndex); disconnectObserver(obsIndex, Observer.observersList); updateOnceStatus(obsIndex, Observer.onceStatus)}();
+      if(Observer.once && !Observer.pin) animate.onFinish(function(){removeMarkers(Observer.markersList, Observer.overlay, obsIndex); disconnectObserver(obsIndex, Observer.observersList); Observer.onceStatus = updateOnceStatus(obsIndex, Observer.onceStatus)}, obsIndex);
+      if(Observer.once && Observer.pin) entry.intersectionRatio > 0.95 && function(){removeMarkers(Observer.markersList, Observer.overlay, obsIndex); disconnectObserver(obsIndex, Observer.observersList); Observer.onceStatus = updateOnceStatus(obsIndex, Observer.onceStatus)}();
     }
     else if(isLeaving && !isBelow){
       if(Observer.triggerActions.onLeave) Observer.triggerActions.onLeave(entry);
@@ -426,7 +460,7 @@ function removeMarkers(markersList, overlay, obsIndex){
 }
 
 function disconnectObserver(obsIndex, observersList){
-  if(typeof obsIndex === 'number'){
+  if(obsIndex !== null){
     return observersList[obsIndex].disconnect();
   }
 
@@ -434,9 +468,9 @@ function disconnectObserver(obsIndex, observersList){
 }
 
 function updateOnceStatus(obsIndex, onceStatus){
-  if(typeof obsIndex === 'number'){
-    return onceStatus[obsIndex] = 'done';
+  if(obsIndex !== null){
+    return onceStatus.map((status, index) => index === obsIndex ? 'done' : status);
   }
-
-  onceStatus.map(status => 'done');
+  
+  return onceStatus.map(status => 'done');
 }

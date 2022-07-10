@@ -97,7 +97,14 @@ export function reverse(index, animationsArray){
   })
 }
 
-export function seek(value = 0, animationsArray){
+export function seek(value = 0, index, animationsArray){
+  if(index !== null){
+    const {mainIndex, secondIndex} =  retrieveAnimationIndex(index, animationsArray);
+    const {delay, duration, iterations, endDelay} = animationsArray[mainIndex][secondIndex].effect.getTiming();
+    const totalTime = delay + (duration * iterations) + endDelay;
+    let seek = (value * totalTime);
+    return animationsArray[mainIndex][secondIndex].currentTime = seek;      
+  }
   animationsArray.map(animationIndex => {
     animationIndex.forEach(animation => {
       const {delay, duration, iterations, endDelay} = animation.effect.getTiming();
@@ -108,36 +115,48 @@ export function seek(value = 0, animationsArray){
   })
 }
 
-export function scrub(pinOptions, animate){
-  const {smoothness, delay} = pinOptions || {smoothness: 0.05, delay: 0};   
-
-  animate.states = {
-    position: 0,
-    target: 0,
-    isPlaying: false
+export function scrub(pinOptions, index, animate){
+  const {smoothness, delay} = pinOptions || {smoothness: 0.05, delay: 0};  
+  // init scrub states
+  if(index !== null){
+    const targetsLength = animate.targets.reduce((prev, current) => prev.length + current.length);
+    animate.scrubStates = Array(targetsLength).fill().map(states => states = {
+      position: 0,
+      target: 0,
+      isPlaying: false
+    })
+  }else{
+    animate.scrubStates = [{
+      position: 0,
+      target: 0,
+      isPlaying: false
+    }]
   }
   
-  animate.useScrub = (value) => {
+  animate.useScrub = (value, index) => {
     
+    const seekIndex = index !== null ? index : null; // return null to seek all targets
+    index = index !== null ? index : 0;
+
     if(delay){
-      setTimeout(() => { animate.states.target = value }, delay);
+      setTimeout(() => { animate.scrubStates[index].target = value }, delay);
     }else{
-      animate.states.target = value;
+      animate.scrubStates[index].target = value;
     }
     
-    const limit = value > animate.states.position ? value - 0.001 : value + 0.001;  
+    const limit = value > animate.scrubStates[index].position ? value - 0.001 : value + 0.001;  
     
     function loop(){
-      const limitCondition = value > animate.states.position ? animate.states.position > limit : animate.states.position < limit;
-      if(limitCondition) return animate.states.isPlaying = false && window.cancelAnimationFrame();
-      if(animate.states.isPlaying === true){
-        animate.states.position += (animate.states.target - animate.states.position) * smoothness;
-        animate.seek(animate.states.position);
+      const limitCondition = value > animate.scrubStates[index].position ? animate.scrubStates[index].position > limit : animate.scrubStates[index].position < limit;
+      if(limitCondition) return animate.scrubStates[index].isPlaying = false && window.cancelAnimationFrame();
+      if(animate.scrubStates[index].isPlaying === true){
+        animate.scrubStates[index].position += (animate.scrubStates[index].target - animate.scrubStates[index].position) * smoothness;
+        animate.seek(animate.scrubStates[index].position, seekIndex);
         requestAnimationFrame(loop);  
       }
     }
-    if(animate.states.isPlaying) return;
+    if(animate.scrubStates[index].isPlaying) return;
     requestAnimationFrame(loop); 
-    animate.states.isPlaying = true;
+    animate.scrubStates[index].isPlaying = true;
   }  
 }

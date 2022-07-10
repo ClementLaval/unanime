@@ -389,24 +389,24 @@ function handleIntersect(entries, observer, animate, obsIndex){
   
     if(isEntering && isBelow){
       if(Observer.triggerActions.onEnter) Observer.triggerActions.onEnter(entry);
-      if(Observer.pin){animate.scrub(entry.intersectionRatio, Observer.pinOptions)}
+      if(Observer.pin){animate.scrub(entry.intersectionRatio, Observer.pinOptions, obsIndex)}
       else{(Observer.toggleActions.onEnter) && animate[Observer.toggleActions.onEnter](obsIndex)}
       if(Observer.once && !Observer.pin) animate.onFinish(function(){removeMarkers(Observer.markersList, Observer.overlay, obsIndex); disconnectObserver(obsIndex, Observer.observersList); Observer.onceStatus = updateOnceStatus(obsIndex, Observer.onceStatus)}, obsIndex);
       if(Observer.once && Observer.pin) entry.intersectionRatio > 0.95 && function(){removeMarkers(Observer.markersList, Observer.overlay, obsIndex); disconnectObserver(obsIndex, Observer.observersList); Observer.onceStatus = updateOnceStatus(obsIndex, Observer.onceStatus)}();
     }
     else if(isLeaving && !isBelow){
       if(Observer.triggerActions.onLeave) Observer.triggerActions.onLeave(entry);
-      if(Observer.pin){return; animate.scrub(1 - entry.intersectionRatio)}
+      if(Observer.pin){return; animate.scrub(1 - entry.intersectionRatio, Observer.pinOptions, obsIndex)}
       else{(Observer.toggleActions.onLeave) && animate[Observer.toggleActions.onLeave](obsIndex)}
     }
     else if(isEntering && !isBelow){
       if(Observer.triggerActions.onEnterBack) Observer.triggerActions.onEnterBack(entry);
-      if(Observer.pin){return; animate.scrub(1 - entry.intersectionRatio)}
+      if(Observer.pin){return; animate.scrub(1 - entry.intersectionRatio, Observer.pinOptions, obsIndex)}
       else{(Observer.toggleActions.onEnterBack) && animate[Observer.toggleActions.onEnterBack](obsIndex)}
     }
     else if(isLeaving && isBelow){
       if(Observer.triggerActions.onLeaveBack) Observer.triggerActions.onLeaveBack(entry);
-      if(Observer.pin){animate.scrub(entry.intersectionRatio, Observer.pinOptions)}
+      if(Observer.pin){animate.scrub(entry.intersectionRatio, Observer.pinOptions, obsIndex)}
       else{(Observer.toggleActions.onLeaveBack) && animate[Observer.toggleActions.onLeaveBack](obsIndex)}
     }
     prevRatio = entry.intersectionRatio;

@@ -548,10 +548,11 @@ Please be sure to undestand how works the API to use it (root, target, threshold
     onLeaveBack: () => {
       console.log('LEAVE BACK');
     },
+      // triggered action when root scroll up and leave back from the target area
     onRefresh: () => {
       console.log('REFRESH OBSERVER');
     },
-    // triggered action when root scroll up and leave back from the target area
+      // triggered when observer is refreshing
   }
 }
 ```

@@ -120,7 +120,13 @@ export function scrub(pinOptions, index, animate){
   const {smoothness, delay} = pinOptions || {smoothness: 0.05, delay: 0};  
   // init scrub states
   if(index !== null){
-    const targetsLength = animate.targets.reduce((prev, current) => prev.length + current.length);
+    let targetsLength
+    if(!animate.targets.some(el => Array.isArray(el))){
+       targetsLength = animate.targets.length;
+    }else{
+      targetsLength = animate.targets.reduce((prev, current) => prev.length + current.length);
+    }
+
     animate.scrubStates = Array(targetsLength).fill().map(states => states = {
       position: 0,
       target: 0,

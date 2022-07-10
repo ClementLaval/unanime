@@ -439,14 +439,12 @@ function disconnectObserver(obsIndex, observersList){
   if(obsIndex !== null){
     return observersList[obsIndex].disconnect();
   }
-
   observersList.map(observer => observer.disconnect());
 }
 
 function updateOnceStatus(obsIndex, onceStatus){
   if(obsIndex !== null){
     return onceStatus.map((status, index) => index === obsIndex ? 'done' : status);
-  }
-  
+  }  
   return onceStatus.map(status => 'done');
 }

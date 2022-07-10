@@ -97,7 +97,8 @@ export function reverse(index, animationsArray){
   })
 }
 
-export function seek(value = 0, index, animationsArray){
+export function seek(value = 0, index = null, animationsArray){
+  
   if(index !== null){
     const {mainIndex, secondIndex} =  retrieveAnimationIndex(index, animationsArray);
     const {delay, duration, iterations, endDelay} = animationsArray[mainIndex][secondIndex].effect.getTiming();

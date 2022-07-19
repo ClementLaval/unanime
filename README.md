@@ -164,6 +164,8 @@ const myAnimation = animate(
     // remove animation from browser at the end | default: false
     willChange: false, 
     // add and remove automatically a 'will-change: transform' to your target during animation | default: false
+    mergeTargets: false,
+    // merge targets in a single array, you can use this option when you want use stagger on different targets for example | default: false
   }
 )
 
@@ -510,13 +512,15 @@ Please be sure to undestand how works the API to use it (root, target, threshold
     target: '#sectionId',
     // by default target automatically select the animation's target (auto detect array create only one observer on direct parent), change it to trigger the animation from another area. Under the hood a layout is created at the end of the body with class=${targetId}-intersection-observer
     targetMargin: '20% 0px',
-    // change target size by adding + / - margins, use a string (px, %, vw ... accepted)
+    // change target size by adding + / - margins, use a string (px, %, vw ... accepted) (NEED overlay: true)
     threshold: 0.3, // default: 0 / if pin is true default: 100
     // set only one threshold if between 0 - 1 (threshold: 0.5) 
     // or an array of threshold (threshold: [0.2, 0.5, 0.8])
     // or automatically calculate an array if you define the number you want (threshold: 36) 
     refreshInterval: 1000,
     // set an interval to refresh target's placement when page's height grow up or during a window resize, default: -1 (disabled)
+    overlay: true,
+    // creating an overlay of the target, you'll can use the option "targetMargin", usefull if you want a static target position (with no overlay, the target position may change with an animation)
     markers: true,
     // set markers to true to see helpers on your screen
     once: false,

@@ -21,6 +21,7 @@ export function setOptions(options, index, targetIndexLength){
   const willChange = returnValue(options.willChange, index, targetIndexLength) || false;  
   const commitStyles = returnValue(options.commitStyles, index, targetIndexLength) || false;
   const initStyles = returnValue(options.initStyles, index, targetIndexLength) || false;
+  const mergeTargets = returnValue(options.mergeTargets, index, targetIndexLength) || false;
   const observer = (options.observer) || null;
   
   return {  
@@ -40,6 +41,7 @@ export function setOptions(options, index, targetIndexLength){
     willChange,
     commitStyles,
     initStyles,
+    mergeTargets,
     observer
   };   
 }  

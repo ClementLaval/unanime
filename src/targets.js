@@ -13,7 +13,6 @@ export function setTargets(targets){
   function setByTargetType(targets){   
     // One target string
     if(typeof targets === 'string'){
-      // return Array.prototype.slice.call(document.querySelectorAll(targets)); // Disable NodeList
       return document.querySelectorAll(targets);
     }
     
@@ -31,9 +30,9 @@ export function setTargets(targets){
   return targetsArray;
 }
 
-export function getTargets(animationsArray){
+export function getTargets(animationsArray, mergeTargets){
   let targetsArray = [];
-  
+
   if(animationsArray.length === 1){
     animationsArray[0].map(animation => {
       targetsArray.push(animation.effect.target);
@@ -50,6 +49,10 @@ export function getTargets(animationsArray){
       
       targetsArray.push(targetsIndex);
     });
+  }
+  
+  if(mergeTargets === true){
+    targetsArray = [...targetsArray].flatMap((item) => item, [])
   }
 
   return targetsArray;

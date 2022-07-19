@@ -1,6 +1,6 @@
-export function setTargets(targets){
-  const targetsArray = [];
-
+export function setTargets(targets, mergeTargets){
+  let targetsArray = [];
+ 
   if(!Array.isArray(targets)){
     targetsArray.push(setByTargetType(targets));
   }
@@ -27,6 +27,12 @@ export function setTargets(targets){
     }    
   }
    
+  if (mergeTargets === true) {
+    targetsArray = [...targetsArray].map(el => Array.prototype.slice.call(el));
+    targetsArray = [...targetsArray].flatMap((item) => item, []);
+    targetsArray = Array(targetsArray);
+  }
+  
   return targetsArray;
 }
 

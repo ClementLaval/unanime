@@ -383,7 +383,7 @@ function handleIntersect(entries, observer, animate, obsIndex){
   entries.map((entry) => {
     let isEntering, isLeaving, isBelow;
     entry.intersectionRatio > prevRatio ? (isEntering = true, isLeaving = false) : (isEntering = false, isLeaving = true);
-    entry.boundingClientRect.top > entry.rootBounds.top ? isBelow = true : isBelow = false;
+    entry.boundingClientRect?.top > entry.rootBounds?.top ? isBelow = true : isBelow = false;
 
     if(firstTick) return firstTick = false; // bypass first tick (load tick)
   
